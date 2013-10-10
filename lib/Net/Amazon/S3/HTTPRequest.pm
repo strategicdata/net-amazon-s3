@@ -36,23 +36,32 @@ sub http_request {
     my $content  = $self->content;
     my $metadata = $self->metadata;
 
-    my $http_headers = $self->_merge_meta( $headers, $metadata );
+    # warn "In http_request, path=$path\n";
 
+    my $http_headers = $self->_merge_meta( $headers, $metadata );
     $self->_add_auth_header( $http_headers, $method, $path )
         unless exists $headers->{Authorization};
+
+    my $host = $self->s3->host;
     my $protocol = $self->s3->secure ? 'https' : 'http';
-    my $uri = "$protocol://s3.amazonaws.com/$path";
-    if ( $path =~ m{^([^/?]+)(.*)} && _is_dns_bucket($1) ) {
-        $uri = "$protocol://$1.s3.amazonaws.com$2";
+    my $uri = "$protocol://$host/$path";
+    if ( $path =~ m{^([^/?]+)(.*)} ) {
+        my $n = $1;
+        my $m = $2;
+        if ( _is_dns_bucket($1) ) {
+            $uri = "$protocol://$n.$host$m";
+        }
     }
+
+    # warn "Request URI: $uri\n";
 
     my $request
         = HTTP::Request->new( $method, $uri, $http_headers, $content );
 
-    # my $req_as = $request->as_string;
-    # $req_as =~ s/[^\n\r\x20-\x7f]/?/g;
-    # $req_as = substr( $req_as, 0, 1024 ) . "\n\n";
-    # warn $req_as;
+    #my $req_as = $request->as_string;
+    #$req_as =~ s/[^\n\r\x20-\x7f]/?/g;
+    #$req_as = substr( $req_as, 0, 1024 ) . "\n\n";
+    #warn $req_as;
 
     return $request;
 }
@@ -71,9 +80,10 @@ sub query_string_authentication_uri {
         = $self->_encode( $aws_secret_access_key, $canonical_string );
 
     my $protocol = $self->s3->secure ? 'https' : 'http';
-    my $uri = "$protocol://s3.amazonaws.com/$path";
+    my $host = $self->s3->host;
+    my $uri = "$protocol://$host/$path";
     if ( $path =~ m{^([^/?]+)(.*)} && _is_dns_bucket($1) ) {
-        $uri = "$protocol://$1.s3.amazonaws.com$2";
+        $uri = "$protocol://$1.$host$2";
     }
     $uri = URI->new($uri);
 
@@ -101,6 +111,7 @@ sub _add_auth_header {
 
     my $canonical_string
         = $self->_canonical_string( $method, $path, $headers );
+
     my $encoded_canonical
         = $self->_encode( $aws_secret_access_key, $canonical_string );
     $headers->header(

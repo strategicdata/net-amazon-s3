@@ -29,6 +29,11 @@ sub http_request {
             . "</LocationConstraint></CreateBucketConfiguration>";
     }
 
+    # Possibly fixing a bug..
+    if ($content eq '') {
+        $headers->{'Content-Length'} = 0;
+    }
+
     return Net::Amazon::S3::HTTPRequest->new(
         s3      => $self->s3,
         method  => 'PUT',
