@@ -23,12 +23,15 @@ sub http_request {
 }
 
 sub query_string_authentication_uri {
-    my ( $self, $expires ) = @_;
+    my ( $self, $expires, $query_form ) = @_;
+
+    my $uri = URI->new( $self->_uri( $self->key ) );
+    $uri->query_form( %$query_form ) if $query_form;
 
     return Net::Amazon::S3::HTTPRequest->new(
         s3     => $self->s3,
         method => $self->method,
-        path   => $self->_uri( $self->key ),
+        path   => $uri->as_string,
     )->query_string_authentication_uri($expires);
 }
 
@@ -61,4 +64,3 @@ This method returns a HTTP::Request object.
 =head2 query_string_authentication_uri
 
 This method returns query string authentication URI.
-

@@ -172,14 +172,14 @@ sub _canonical_string {
     if ( $path =~ /[&?](acl|torrent|location|uploads|delete)($|=|&)/ ) {
         $buf .= "?$1";
     } elsif ( my %query_params = URI->new($path)->query_form ){
-        #see if the remaining parsed query string provides us with any query string or upload id
-        if($query_params{partNumber} && $query_params{uploadId}){
-            #re-evaluate query string, the order of the params is important for request signing, so we can't depend on URI to do the right thing
-            $buf .= sprintf("?partNumber=%s&uploadId=%s", $query_params{partNumber}, $query_params{uploadId});
-        }
-        elsif($query_params{uploadId}){
-            $buf .= sprintf("?uploadId=%s",$query_params{uploadId});
-        }
+        my @interesting_keys = grep {
+             $_ eq 'partNumber'
+          or $_ eq 'uploadId'
+          or $_ =~ /^response-/
+        } sort keys %query_params;
+
+        # amazon likes decoded params, but still joined with &
+        $buf .= '?' . join('&', map{ $_ . '=' . $query_params{$_} } @interesting_keys ) if @interesting_keys;
     }
 
     return $buf;
