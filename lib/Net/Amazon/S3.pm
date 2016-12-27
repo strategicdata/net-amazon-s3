@@ -196,6 +196,8 @@ with a true value.
 Set this to C<1> if you want to use SSL-encrypted connections when talking
 to S3. Defaults to C<0>.
 
+To use SSL-encrypted connections, LWP::Protocol::https is required.
+
 =item timeout
 
 How many seconds should your script wait before bailing on a request to S3? Defaults
