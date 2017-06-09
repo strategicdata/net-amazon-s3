@@ -5,6 +5,8 @@ use MooseX::StrictConstructor 0.16;
 
 # ABSTRACT: Use the Amazon S3 - Simple Storage Service
 
+our $VERSION = '0.90';
+
 =head1 SYNOPSIS
 
   use Net::Amazon::S3;
