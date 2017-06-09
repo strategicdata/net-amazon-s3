@@ -12,7 +12,7 @@
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
       "version" : "2"
    },
-   "name" : "net-amazon-s3",
+   "name" : "Net-Amazon-S3",
    "no_index" : {
       "directory" : [
          "t",

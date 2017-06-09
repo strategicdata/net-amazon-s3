@@ -401,11 +401,3 @@ Pedro Figueiredo <me@pedrofigueiredo.org> - since 0.54
 # SEE ALSO
 
 [Net::Amazon::S3::Bucket](https://metacpan.org/pod/Net::Amazon::S3::Bucket)
-
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 221:
-
-    '=item' outside of any '=over'
