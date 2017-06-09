@@ -218,8 +218,6 @@ as recommended by Amazon. Defaults to off.
 The S3 host endpoint to use. Defaults to 's3.amazonaws.com'. This allows
 you to connect to any S3-compatible host.
 
-=back
-
 =item use_virtual_host
 
 Use the virtual host method ('bucketname.s3.amazonaws.com') instead of specifying the
