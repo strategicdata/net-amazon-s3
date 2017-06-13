@@ -5,6 +5,8 @@ use MooseX::StrictConstructor 0.16;
 
 # ABSTRACT: Use the Amazon S3 - Simple Storage Service
 
+our $VERSION = '0.90';
+
 =head1 SYNOPSIS
 
   use Net::Amazon::S3;
@@ -215,8 +217,6 @@ as recommended by Amazon. Defaults to off.
 
 The S3 host endpoint to use. Defaults to 's3.amazonaws.com'. This allows
 you to connect to any S3-compatible host.
-
-=back
 
 =item use_virtual_host
 
