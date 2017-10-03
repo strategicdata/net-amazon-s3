@@ -178,7 +178,7 @@ sub put {
 }
 
 sub _put {
-    my ( $self, $value, $size, $md5_hex ) = @_;
+    my ( $self, $value, $size, $md5_hex, $sha_hex ) = @_;
 
     my $md5_base64 = encode_base64( pack( 'H*', $md5_hex ) );
     chomp $md5_base64;
@@ -188,6 +188,10 @@ sub _put {
         'Content-Length' => $size,
         'Content-Type'   => $self->content_type,
     };
+
+    if(defined $sha_hex) {
+        $conf->{'x-amz-content-sha256'} = $sha_hex;
+    }
 
     if ( $self->expires ) {
         $conf->{Expires}
@@ -238,7 +242,11 @@ sub put_filename {
         $size = $stat->size;
     }
 
-    $self->_put( $self->_content_sub($filename), $size, $md5_hex );
+    # Digest::SHA can't calculate sha256 checksum for the coderef, so calc it here now
+    my $sha = Digest::SHA->new('256');
+    $sha->addfile($filename);
+
+    $self->_put( $self->_content_sub($filename), $size, $md5_hex, $sha->hexdigest );
 }
 
 sub delete {
