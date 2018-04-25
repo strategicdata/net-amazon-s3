@@ -26,6 +26,12 @@ has 'content' =>
     ( is => 'ro', isa => 'Str|CodeRef|ScalarRef', required => 0, default => '' );
 has 'metadata' =>
     ( is => 'ro', isa => 'HashRef', required => 0, default => sub { {} } );
+has use_virtual_host => (
+    is => 'ro',
+    isa => 'Bool',
+    lazy => 1,
+    default => sub { $_[0]->s3->use_virtual_host },
+);
 
 __PACKAGE__->meta->make_immutable;
 
@@ -44,7 +50,7 @@ sub http_request {
         unless exists $headers->{Authorization};
     my $protocol = $self->s3->secure ? 'https' : 'http';
     my $host = $self->s3->host;
-    if ($self->s3->use_virtual_host) {
+    if ($self->use_virtual_host) {
         # use https://bucketname.s3.amazonaws.com instead of https://s3.amazonaws.com/bucketname
         # see http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html
         $path =~ s{(.*?)/}{} and my $bucket = $1;
@@ -78,7 +84,7 @@ sub query_string_authentication_uri {
 
     my $protocol = $self->s3->secure ? 'https' : 'http';
     my $host = $self->s3->host;
-    if ($self->s3->use_virtual_host) {
+    if ($self->use_virtual_host) {
         # use https://bucketname.s3.amazonaws.com instead of https://s3.amazonaws.com/bucketname
         # see http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html
         $path =~ s{(.*?)/}{} and my $bucket = $1;

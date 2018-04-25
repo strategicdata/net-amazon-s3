@@ -13,6 +13,7 @@ sub http_request {
     return $self->_build_http_request(
         method => 'GET',
         path   => '',
+        use_virtual_host => 0,
     );
 }
 
