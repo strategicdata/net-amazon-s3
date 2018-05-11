@@ -10,6 +10,8 @@ use URI::QueryParam;
 use URI;
 use VM::EC2::Security::CredentialCache;
 
+use Net::Amazon::S3::Signature::V2;
+
 # ABSTRACT: Create a signed HTTP::Request
 
 my $METADATA_PREFIX      = 'x-amz-meta-';
@@ -36,8 +38,9 @@ has use_virtual_host => (
 __PACKAGE__->meta->make_immutable;
 
 # make the HTTP::Request object
-sub http_request {
+sub _build_request {
     my $self     = shift;
+
     my $method   = $self->method;
     my $path     = $self->path;
     my $headers  = $self->headers;
@@ -45,169 +48,39 @@ sub http_request {
     my $metadata = $self->metadata;
 
     my $http_headers = $self->_merge_meta( $headers, $metadata );
-
-    $self->_add_auth_header( $http_headers, $method, $path )
-        unless exists $headers->{Authorization};
     my $protocol = $self->s3->secure ? 'https' : 'http';
     my $host = $self->s3->host;
+    my $uri = "$protocol://$host/$path";
+
     if ($self->use_virtual_host) {
         # use https://bucketname.s3.amazonaws.com instead of https://s3.amazonaws.com/bucketname
         # see http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html
-        $path =~ s{(.*?)/}{} and my $bucket = $1;
-        $host = "$bucket.$host";
+        $uri =~ s{$host/(.*?)/}{$1.$host/};
     }
-    my $uri = "$protocol://$host/$path";
 
-    my $request
-        = HTTP::Request->new( $method, $uri, $http_headers, $content );
+    return HTTP::Request->new( $method, $uri, $http_headers, $content );
+}
 
-    # my $req_as = $request->as_string;
-    # $req_as =~ s/[^\n\r\x20-\x7f]/?/g;
-    # $req_as = substr( $req_as, 0, 1024 ) . "\n\n";
-    # warn $req_as;
+sub http_request {
+    my $self     = shift;
+
+    my $request = $self->_build_request;
+
+    Net::Amazon::S3::Signature::V2->new( http_request => $self )->sign_request( $request )
+        unless $request->header( 'Authorization' );
 
     return $request;
 }
 
 sub query_string_authentication_uri {
     my ( $self, $expires ) = @_;
-    my $method  = $self->method;
-    my $path    = $self->path;
-    my $headers = $self->headers;
 
-    my $aws_access_key_id     = $self->s3->aws_access_key_id;
-    my $aws_secret_access_key = $self->s3->aws_secret_access_key;
-    my $canonical_string
-        = $self->_canonical_string( $method, $path, $headers, $expires );
-    my $encoded_canonical
-        = $self->_encode( $aws_secret_access_key, $canonical_string );
+    my $request = $self->_build_request;
+    my $sign = Net::Amazon::S3::Signature::V2->new( http_request => $self );
 
-    my $protocol = $self->s3->secure ? 'https' : 'http';
-    my $host = $self->s3->host;
-    if ($self->use_virtual_host) {
-        # use https://bucketname.s3.amazonaws.com instead of https://s3.amazonaws.com/bucketname
-        # see http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html
-        $path =~ s{(.*?)/}{} and my $bucket = $1;
-        $host = "$bucket.$host";
-    }
-    my $uri = "$protocol://$host/$path";
-
-    $uri = URI->new($uri);
-
-    $uri->query_param( AWSAccessKeyId => $aws_access_key_id );
-    $uri->query_param( Expires        => $expires );
-    $uri->query_param( Signature      => $encoded_canonical );
-
-    return $uri;
+    return $sign->sign_uri( $request, $expires );
 }
 
-sub _add_auth_header {
-    my ( $self, $headers, $method, $path ) = @_;
-
-    if ($self->s3->use_iam_role) {
-        my $creds = VM::EC2::Security::CredentialCache->get();
-        defined($creds) || die("Unable to retrieve IAM role credentials");
-        $self->s3->aws_access_key_id($creds->accessKeyId);
-        $self->s3->aws_secret_access_key($creds->secretAccessKey);
-        $self->s3->aws_session_token($creds->sessionToken);
-    }
-
-    my $aws_access_key_id     = $self->s3->aws_access_key_id;
-    my $aws_secret_access_key = $self->s3->aws_secret_access_key;
-    my $aws_session_token     = $self->s3->aws_session_token;
-
-    if ( not $headers->header('Date') ) {
-        $headers->header( Date => time2str(time) );
-    }
-
-    if ( not $headers->header('x-amz-security-token') and
-         defined $aws_session_token ) {
-        $headers->header( 'x-amz-security-token' => $aws_session_token );
-    }
-
-    my $canonical_string
-        = $self->_canonical_string( $method, $path, $headers );
-    my $encoded_canonical
-        = $self->_encode( $aws_secret_access_key, $canonical_string );
-    $headers->header(
-        Authorization => "AWS $aws_access_key_id:$encoded_canonical" );
-}
-
-# generate a canonical string for the given parameters.  expires is optional and is
-# only used by query string authentication.
-sub _canonical_string {
-    my ( $self, $method, $path, $headers, $expires ) = @_;
-    my %interesting_headers = ();
-    while ( my ( $key, $value ) = each %$headers ) {
-        my $lk = lc $key;
-        if (   $lk eq 'content-md5'
-            or $lk eq 'content-type'
-            or $lk eq 'date'
-            or $lk =~ /^$AMAZON_HEADER_PREFIX/ )
-        {
-            $interesting_headers{$lk} = $self->_trim($value);
-        }
-    }
-
-    # these keys get empty strings if they don't exist
-    $interesting_headers{'content-type'} ||= '';
-    $interesting_headers{'content-md5'}  ||= '';
-
-    # just in case someone used this.  it's not necessary in this lib.
-    $interesting_headers{'date'} = ''
-        if $interesting_headers{'x-amz-date'};
-
-    # if you're using expires for query string auth, then it trumps date
-    # (and x-amz-date)
-    $interesting_headers{'date'} = $expires if $expires;
-
-    my $buf = "$method\n";
-    foreach my $key ( sort keys %interesting_headers ) {
-        if ( $key =~ /^$AMAZON_HEADER_PREFIX/ ) {
-            $buf .= "$key:$interesting_headers{$key}\n";
-        } else {
-            $buf .= "$interesting_headers{$key}\n";
-        }
-    }
-
-    # don't include anything after the first ? in the resource...
-    $path =~ /^([^?]*)/;
-    $buf .= "/$1";
-
-    # ...unless there any parameters we're interested in...
-    if ( $path =~ /[&?](acl|torrent|location|uploads|delete)($|=|&)/ ) {
-        $buf .= "?$1";
-    } elsif ( my %query_params = URI->new($path)->query_form ){
-        my @interesting_keys = grep {
-             $_ eq 'partNumber'
-          or $_ eq 'uploadId'
-          or $_ =~ /^response-/
-        } sort keys %query_params;
-
-        # amazon likes decoded params, but still joined with &
-        $buf .= '?' . join('&', map{ $_ . '=' . $query_params{$_} } @interesting_keys ) if @interesting_keys;
-    }
-
-    return $buf;
-}
-
-# finds the hmac-sha1 hash of the canonical string and the aws secret access key and then
-# base64 encodes the result (optionally urlencoding after that).
-sub _encode {
-    my ( $self, $aws_secret_access_key, $str, $urlencode ) = @_;
-    my $hmac = Digest::HMAC_SHA1->new($aws_secret_access_key);
-    $hmac->add($str);
-    my $b64 = encode_base64( $hmac->digest, '' );
-    if ($urlencode) {
-        return $self->_urlencode($b64);
-    } else {
-        return $b64;
-    }
-}
-
-
-# generates an HTTP::Headers objects given one hash that represents http
-# headers to set and another hash that represents an object's metadata.
 sub _merge_meta {
     my ( $self, $headers, $metadata ) = @_;
     $headers  ||= {};
@@ -222,18 +95,6 @@ sub _merge_meta {
     }
 
     return $http_header;
-}
-
-sub _trim {
-    my ( $self, $value ) = @_;
-    $value =~ s/^\s+//;
-    $value =~ s/\s+$//;
-    return $value;
-}
-
-sub _urlencode {
-    my ( $self, $unencoded ) = @_;
-    return uri_escape_utf8( $unencoded, '^A-Za-z0-9_-' );
 }
 
 1;
