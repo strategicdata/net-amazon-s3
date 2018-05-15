@@ -107,6 +107,7 @@ Development of this code happens here: https://github.com/rustyconover/net-amazo
 
 use Carp;
 use Digest::HMAC_SHA1;
+use Scalar::Util;
 
 use Net::Amazon::S3::Bucket;
 use Net::Amazon::S3::Client;
@@ -360,9 +361,13 @@ Returns an (unverified) bucket object from an account. Does no network access.
 =cut
 
 sub bucket {
-    my ( $self, $bucketname ) = @_;
+    my ( $self, $bucket ) = @_;
+
+    return $bucket
+        if Scalar::Util::blessed( $bucket ) && $bucket->isa( 'Net::Amazon::S3::Bucket' );
+
     return Net::Amazon::S3::Bucket->new(
-        { bucket => $bucketname, account => $self } );
+        { bucket => $bucket, account => $self } );
 }
 
 =head2 delete_bucket
