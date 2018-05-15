@@ -8,7 +8,7 @@ extends 'Net::Amazon::S3::Request';
 has 'bucket'    => ( is => 'ro', isa => 'BucketName',      required => 1 );
 has 'acl_short' => ( is => 'ro', isa => 'Maybe[AclShort]', required => 0 );
 has 'location_constraint' =>
-    ( is => 'ro', isa => 'Maybe[LocationConstraint]', required => 0 );
+    ( is => 'ro', isa => 'MaybeLocationConstraint', coerce => 1, required => 0 );
 
 __PACKAGE__->meta->make_immutable;
 
@@ -22,7 +22,7 @@ sub http_request {
 
     my $content = '';
     if ( defined $self->location_constraint &&
-         $self->location_constraint ne 'US') {
+         $self->location_constraint ne 'us-east-1') {
         $content
             = "<CreateBucketConfiguration><LocationConstraint>"
             . $self->location_constraint

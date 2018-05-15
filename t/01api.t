@@ -56,7 +56,11 @@ for my $location ( undef, 'EU' ) {
     ) or die $s3->err . ": " . $s3->errstr;
 
     is( ref $bucket_obj,                      "Net::Amazon::S3::Bucket" );
-    is( $bucket_obj->get_location_constraint, $location );
+    my $expected_location = $location;
+    $expected_location = 'us-east-1' unless defined $expected_location;
+    $expected_location = 'eu-west-1' if $expected_location eq 'EU';
+
+    is( $bucket_obj->get_location_constraint, $expected_location );
 
     like_acl_allusers_read($bucket_obj);
     ok( $bucket_obj->set_acl( { acl_short => 'private' } ) );

@@ -558,8 +558,12 @@ sub get_location_constraint {
     return undef unless $xpc && !$self->account->_remember_errors($xpc);
 
     my $lc = $xpc->findvalue("//s3:LocationConstraint");
+
+    # S3 documentation: https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGETlocation.html
+    # When the bucket's region is US East (N. Virginia),
+    # Amazon S3 returns an empty string for the bucket's region
     if ( defined $lc && $lc eq '' ) {
-        $lc = undef;
+        $lc = 'us-east-1';
     }
     return $lc;
 }

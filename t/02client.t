@@ -57,7 +57,7 @@ like(
     'newly created bucket is public-readable'
 );
 
-is( $bucket->location_constraint, 'EU', 'newly created bucket is in the EU' );
+is( $bucket->location_constraint, 'eu-west-1', 'newly created bucket is in the EU' );
 
 my $stream = $bucket->list;
 until ( $stream->is_done ) {

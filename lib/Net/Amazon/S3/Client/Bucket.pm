@@ -64,7 +64,7 @@ sub location_constraint {
 
     my $lc = $xpc->findvalue('/s3:LocationConstraint');
     if ( defined $lc && $lc eq '' ) {
-        $lc = 'US';
+        $lc = 'us-east-1';
     }
     return $lc;
 }
