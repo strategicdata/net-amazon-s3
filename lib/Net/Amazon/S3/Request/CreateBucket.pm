@@ -5,7 +5,8 @@ extends 'Net::Amazon::S3::Request';
 
 # ABSTRACT: An internal class to create a bucket
 
-has 'bucket'    => ( is => 'ro', isa => 'BucketName',      required => 1 );
+with 'Net::Amazon::S3::Role::Bucket';
+
 has 'acl_short' => ( is => 'ro', isa => 'Maybe[AclShort]', required => 0 );
 has 'location_constraint' =>
     ( is => 'ro', isa => 'MaybeLocationConstraint', coerce => 1, required => 0 );
@@ -32,7 +33,7 @@ sub http_request {
     return Net::Amazon::S3::HTTPRequest->new(
         s3      => $self->s3,
         method  => 'PUT',
-        path    => $self->bucket . '/',
+        path    => $self->_uri,
         headers => $headers,
         content => $content,
     )->http_request;

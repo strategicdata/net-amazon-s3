@@ -9,7 +9,8 @@ extends 'Net::Amazon::S3::Request';
 
 # ABSTRACT: An internal class to delete multiple objects
 
-has 'bucket' => ( is => 'ro', isa => 'BucketName', required => 1 );
+with 'Net::Amazon::S3::Role::Bucket';
+
 has 'keys'    => ( is => 'ro', isa => 'ArrayRef[Str]', required => 1 );
 __PACKAGE__->meta->make_immutable;
 

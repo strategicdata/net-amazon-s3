@@ -8,7 +8,8 @@ use XML::LibXML;
 
 extends 'Net::Amazon::S3::Request';
 
-has 'bucket'    => ( is => 'ro', isa => 'BucketName', required => 1 );
+with 'Net::Amazon::S3::Role::Bucket';
+
 has 'key'       => ( is => 'ro', isa => 'Str',        required => 1 );
 has 'upload_id' => ( is => 'ro', isa => 'Str',        required => 1 );
 

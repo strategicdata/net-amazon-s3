@@ -7,7 +7,8 @@ use Carp qw/croak/;
 
 extends 'Net::Amazon::S3::Request';
 
-has 'bucket'    => ( is => 'ro', isa => 'BucketName', required => 1 );
+with 'Net::Amazon::S3::Role::Bucket';
+
 has 'keys'      => ( is => 'ro', isa => 'ArrayRef',   required => 1 );
 
 __PACKAGE__->meta->make_immutable;
@@ -47,7 +48,7 @@ sub http_request {
     return Net::Amazon::S3::HTTPRequest->new(
         s3      => $self->s3,
         method  => 'POST',
-        path    => $self->bucket . '/?delete',
+        path    => $self->_uri . '?delete',
         content => $content,
         headers => $header_spec,
     )->http_request;

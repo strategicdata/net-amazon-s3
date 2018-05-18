@@ -6,7 +6,8 @@ extends 'Net::Amazon::S3::Request';
 
 # ABSTRACT: List the parts in a multipart upload.
 
-has 'bucket'            => ( is => 'ro', isa => 'BucketName',      required => 1 );
+with 'Net::Amazon::S3::Role::Bucket';
+
 has 'key'               => ( is => 'ro', isa => 'Str',             required => 1 );
 has 'upload_id'         => ( is => 'ro', isa => 'Str',             required => 1 );
 has 'acl_short'         => ( is => 'ro', isa => 'Maybe[AclShort]', required => 0 );

@@ -6,7 +6,8 @@ extends 'Net::Amazon::S3::Request';
 
 # ABSTRACT: An internal class to get an object's access control
 
-has 'bucket' => ( is => 'ro', isa => 'BucketName',  required => 1 );
+with 'Net::Amazon::S3::Role::Bucket';
+
 has 'key'    => ( is => 'ro', isa => 'Str',         required => 1 );
 
 __PACKAGE__->meta->make_immutable;

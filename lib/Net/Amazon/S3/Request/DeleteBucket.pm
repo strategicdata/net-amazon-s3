@@ -5,7 +5,7 @@ extends 'Net::Amazon::S3::Request';
 
 # ABSTRACT: An internal class to delete a bucket
 
-has 'bucket' => ( is => 'ro', isa => 'BucketName', required => 1 );
+with 'Net::Amazon::S3::Role::Bucket';
 
 __PACKAGE__->meta->make_immutable;
 
@@ -15,7 +15,7 @@ sub http_request {
     return Net::Amazon::S3::HTTPRequest->new(
         s3     => $self->s3,
         method => 'DELETE',
-        path   => $self->bucket . '/',
+        path   => $self->_uri,
     )->http_request;
 }
 
