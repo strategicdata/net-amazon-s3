@@ -278,6 +278,26 @@ sub head_key {
     return $self->get_key( $key, "HEAD" );
 }
 
+=head2 query_string_authentication_uri KEY, EXPIRES_AT
+
+Takes key and expiration time (epoch time) and returns uri signed
+with query parameter
+
+=cut
+
+sub query_string_authentication_uri {
+    my ( $self, $key, $expires_at ) = @_;
+
+    my $request = Net::Amazon::S3::Request::GetObject->new(
+        s3     => $self->account,
+        bucket => $self,
+        key    => $key,
+        method => 'GET',
+    );
+
+    return $request->query_string_authentication_uri( $expires_at );
+}
+
 =head2 get_key $key_name [$method]
 
 Takes a key name and an optional HTTP method (which defaults to C<GET>.
