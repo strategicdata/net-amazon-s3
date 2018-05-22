@@ -10,6 +10,12 @@ has 'account' => ( is => 'ro', isa => 'Net::Amazon::S3', required => 1 );
 has 'bucket'  => ( is => 'ro', isa => 'Str',             required => 1 );
 has 'creation_date' => ( is => 'ro', isa => 'Maybe[Str]', required => 0 );
 
+has 'region' => (
+    is => 'ro',
+    lazy => 1,
+    default => sub { $_[0]->get_location_constraint },
+);
+
 __PACKAGE__->meta->make_immutable;
 
 # ABSTRACT: convenience object for working with Amazon S3 buckets
