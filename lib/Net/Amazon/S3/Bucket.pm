@@ -383,6 +383,37 @@ Returns true on success and false on failure
 =cut
 
 # returns bool
+sub delete_multi_object {
+    my $self = shift;
+    my @objects = @_;
+    return unless( scalar(@objects) );
+
+    # Since delete can handle up to 1000 requests, be a little bit nicer
+    # and slice up requests and also allow keys to be strings
+    # rather than only objects.
+    my $last_result;
+    while (scalar(@objects) > 0) {
+        my $http_request = Net::Amazon::S3::Request::DeleteMultiObject->new(
+            s3      => $self->account,
+            bucket  => $self,
+            keys    => [map {
+                if (ref($_)) {
+                    $_->key
+                } else {
+                    $_
+                }
+            } splice @objects, 0, ((scalar(@objects) > 1000) ? 1000 : scalar(@objects))]
+        )->http_request;
+
+        my $xpc = $self->account->_send_request($http_request);
+
+        return undef
+            unless $xpc && !$self->account->_remember_errors($xpc);
+    }
+
+    return 1;
+}
+
 sub delete_key {
     my ( $self, $key ) = @_;
     croak 'must specify key' unless defined $key && length $key;
