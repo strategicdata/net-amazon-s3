@@ -14,6 +14,7 @@ sub http_request {
         method => 'GET',
         path   => '',
         use_virtual_host => 0,
+        authorization_method => 'Net::Amazon::S3::Signature::V2',
     );
 }
 
