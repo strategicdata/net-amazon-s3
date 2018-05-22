@@ -19,6 +19,9 @@ my $AMAZON_HEADER_PREFIX = 'x-amz-';
 
 enum 'HTTPMethod' => [ qw(DELETE GET HEAD PUT POST) ];
 
+with 'Net::Amazon::S3::Role::Bucket';
+has '+bucket' => (required => 0);
+
 has 's3'     => ( is => 'ro', isa => 'Net::Amazon::S3', required => 1 );
 has 'method' => ( is => 'ro', isa => 'HTTPMethod',      required => 1 );
 has 'path'   => ( is => 'ro', isa => 'Str',             required => 1 );

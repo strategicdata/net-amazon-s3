@@ -102,6 +102,7 @@ sub _build_signed_request {
     return Net::Amazon::S3::HTTPRequest->new(
         %params,
         s3 => $self->s3,
+        $self->can( 'bucket' ) ? (bucket => $self->bucket) : (),
     );
 }
 
