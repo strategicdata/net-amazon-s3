@@ -34,6 +34,12 @@ has use_virtual_host => (
     lazy => 1,
     default => sub { $_[0]->s3->use_virtual_host },
 );
+has authorization_method => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    default => sub { $_[0]->s3->authorization_method },
+);
 
 __PACKAGE__->meta->make_immutable;
 
@@ -66,7 +72,7 @@ sub http_request {
 
     my $request = $self->_build_request;
 
-    Net::Amazon::S3::Signature::V2->new( http_request => $self )->sign_request( $request )
+    $self->authorization_method->new( http_request => $self )->sign_request( $request )
         unless $request->header( 'Authorization' );
 
     return $request;
@@ -76,7 +82,7 @@ sub query_string_authentication_uri {
     my ( $self, $expires ) = @_;
 
     my $request = $self->_build_request;
-    my $sign = Net::Amazon::S3::Signature::V2->new( http_request => $self );
+    my $sign = $self->authorization_method->new( http_request => $self );
 
     return $sign->sign_uri( $request, $expires );
 }

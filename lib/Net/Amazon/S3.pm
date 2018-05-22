@@ -133,6 +133,7 @@ use Net::Amazon::S3::Request::PutObject;
 use Net::Amazon::S3::Request::PutPart;
 use Net::Amazon::S3::Request::SetBucketAccessControl;
 use Net::Amazon::S3::Request::SetObjectAccessControl;
+use Net::Amazon::S3::Signature::V2;
 use LWP::UserAgent::Determined;
 use URI::Escape qw(uri_escape_utf8);
 use XML::LibXML;
@@ -151,6 +152,12 @@ has 'ua'     => ( is => 'rw', isa => 'LWP::UserAgent', required => 0 );
 has 'err'    => ( is => 'rw', isa => 'Maybe[Str]',     required => 0 );
 has 'errstr' => ( is => 'rw', isa => 'Maybe[Str]',     required => 0 );
 has 'aws_session_token' => ( is => 'rw', isa => 'Str', required => 0 );
+has authorization_method => (
+    is => 'ro',
+    isa => 'Str',
+    required => 0,
+    default => 'Net::Amazon::S3::Signature::V2',
+);
 
 __PACKAGE__->meta->make_immutable;
 
