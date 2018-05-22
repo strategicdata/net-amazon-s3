@@ -34,11 +34,10 @@ sub http_request {
         $path .= '?' . join( '&', @post );
     }
 
-    return Net::Amazon::S3::HTTPRequest->new(
-        s3     => $self->s3,
+    return $self->_build_http_request(
         method => 'GET',
         path   => $path,
-    )->http_request;
+    );
 }
 
 sub _urlencode {

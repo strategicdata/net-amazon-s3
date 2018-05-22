@@ -25,12 +25,11 @@ sub http_request {
         $headers->{'x-amz-server-side-encryption'} = $self->encryption;
     }
 
-    return Net::Amazon::S3::HTTPRequest->new(
-        s3      => $self->s3,
+    return $self->_build_http_request(
         method  => 'POST',
         path    => $self->_uri( $self->key ).'?uploads',
         headers => $self->headers,
-    )->http_request;
+    );
 }
 
 1;

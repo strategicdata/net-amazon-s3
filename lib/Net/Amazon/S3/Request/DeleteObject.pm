@@ -15,11 +15,10 @@ __PACKAGE__->meta->make_immutable;
 sub http_request {
     my $self = shift;
 
-    return Net::Amazon::S3::HTTPRequest->new(
-        s3     => $self->s3,
+    return $self->_build_http_request(
         method => 'DELETE',
         path   => $self->_uri( $self->key ),
-    )->http_request;
+    );
 }
 
 1;

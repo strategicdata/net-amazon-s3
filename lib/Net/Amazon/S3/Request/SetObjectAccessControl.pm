@@ -31,13 +31,12 @@ sub http_request {
         : {};
     my $xml = $self->acl_xml || '';
 
-    return Net::Amazon::S3::HTTPRequest->new(
-        s3      => $self->s3,
+    return $self->_build_http_request(
         method  => 'PUT',
         path    => $self->_uri( $self->key ) . '?acl',
         headers => $headers,
         content => $xml,
-    )->http_request;
+    );
 }
 
 1;

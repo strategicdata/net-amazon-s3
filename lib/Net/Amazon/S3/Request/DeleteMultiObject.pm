@@ -45,13 +45,12 @@ sub http_request {
     };
 
     #build signed request
-    return Net::Amazon::S3::HTTPRequest->new(
-        s3      => $self->s3,
+    return $self->_build_http_request(
         method  => 'POST',
         path    => $self->_uri . '?delete',
         content => $content,
         headers => $header_spec,
-    )->http_request;
+    );
 }
 
 1;

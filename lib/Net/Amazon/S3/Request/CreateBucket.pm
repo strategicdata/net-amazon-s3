@@ -30,13 +30,12 @@ sub http_request {
             . "</LocationConstraint></CreateBucketConfiguration>";
     }
 
-    return Net::Amazon::S3::HTTPRequest->new(
-        s3      => $self->s3,
+    return $self->_build_http_request(
         method  => 'PUT',
         path    => $self->_uri,
         headers => $headers,
         content => $content,
-    )->http_request;
+    );
 }
 
 1;

@@ -96,6 +96,21 @@ sub _uri {
         : $bucket . "/";
 }
 
+sub _build_signed_request {
+    my ($self, %params) = @_;
+
+    return Net::Amazon::S3::HTTPRequest->new(
+        %params,
+        s3 => $self->s3,
+    );
+}
+
+sub _build_http_request {
+    my ($self, %params) = @_;
+
+    return $self->_build_signed_request( %params )->http_request;
+}
+
 1;
 
 __END__

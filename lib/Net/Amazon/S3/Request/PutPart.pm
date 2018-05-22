@@ -31,8 +31,7 @@ sub http_request {
             $self->copy_source_bucket.'/'.$self->copy_source_key;
     }
 
-    return Net::Amazon::S3::HTTPRequest->new(
-        s3      => $self->s3,
+    return $self->_build_http_request(
         method  => 'PUT',
         path    => $self->_uri($self->key) .
                    '?partNumber=' .
@@ -41,7 +40,7 @@ sub http_request {
                    $self->upload_id,
         headers => $headers,
         content => scalar( defined( $self->value ) ? $self->value : '' ),
-    )->http_request;
+    );
 }
 
 1;

@@ -24,12 +24,11 @@ sub http_request {
         $headers->{'x-amz-acl'} = $self->acl_short;
     }
 
-    return Net::Amazon::S3::HTTPRequest->new(
-        s3      => $self->s3,
+    return $self->_build_http_request(
         method  => 'GET',
         path    => $self->_uri( $self->key ).'?uploadId='.$self->upload_id,
         headers => $self->headers,
-    )->http_request;
+    );
 }
 
 1;

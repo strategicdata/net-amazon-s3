@@ -50,13 +50,12 @@ sub http_request {
     };
 
     #build signed request
-    return Net::Amazon::S3::HTTPRequest->new( #See patch below
-        s3      => $self->s3,
+    return $self->_build_http_request(
         method  => 'POST',
         path    => $self->_uri( $self->key ). '?uploadId='.$self->upload_id,
         content => $content,
         headers => $header_spec,
-    )->http_request;
+    );
 }
 
 1;

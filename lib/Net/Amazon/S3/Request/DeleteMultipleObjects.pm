@@ -44,13 +44,12 @@ sub http_request {
         'Content-Length' => length($delete_content),
     };
 
-    return Net::Amazon::S3::HTTPRequest->new(
-        s3     => $self->s3,
+    return $self->_build_http_request(
         method => 'POST',
         path   => $self->_uri() . "?delete",
         headers => $conf,
         content => $delete_content,
-    )->http_request;
+    );
 }
 
 1;
