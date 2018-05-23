@@ -134,6 +134,7 @@ use Net::Amazon::S3::Request::PutPart;
 use Net::Amazon::S3::Request::SetBucketAccessControl;
 use Net::Amazon::S3::Request::SetObjectAccessControl;
 use Net::Amazon::S3::Signature::V2;
+use Net::Amazon::S3::Signature::V4;
 use LWP::UserAgent::Determined;
 use URI::Escape qw(uri_escape_utf8);
 use XML::LibXML;
@@ -162,7 +163,7 @@ has authorization_method => (
     is => 'ro',
     isa => 'Str',
     required => 0,
-    default => 'Net::Amazon::S3::Signature::V2',
+    default => 'Net::Amazon::S3::Signature::V4',
 );
 
 __PACKAGE__->meta->make_immutable;
