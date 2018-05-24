@@ -35,8 +35,7 @@ sub http_request {
         path    => $self->_uri,
         headers => $headers,
         content => $content,
-        use_virtual_host => 0,
-        authorization_method => 'Net::Amazon::S3::Signature::V2',
+        region  => 'us-east-1',
     );
 }
 

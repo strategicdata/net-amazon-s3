@@ -43,6 +43,12 @@ has authorization_method => (
     lazy => 1,
     default => sub { $_[0]->s3->authorization_method },
 );
+has region => (
+    is => 'ro',
+    isa => 'Str',
+    lazy => 1,
+    default => sub { $_[0]->bucket->region },
+);
 
 __PACKAGE__->meta->make_immutable;
 
