@@ -12,7 +12,7 @@ use File::Temp qw/ :seekable /;
 unless ( $ENV{'AMAZON_S3_EXPENSIVE_TESTS'} ) {
     plan skip_all => 'Testing this module for real costs money.';
 } else {
-    plan tests => 54;
+    plan tests => 53;
 }
 
 use_ok('Net::Amazon::S3');
@@ -32,14 +32,6 @@ my $readme_md5hex = file_md5_hex('README.md');
 my $client = Net::Amazon::S3::Client->new( s3 => $s3 );
 
 my @buckets = $client->buckets;
-
-TODO: {
-    local $TODO = "These tests only work if you're pedro";
-    my $first_bucket = $buckets[0];
-    like( $first_bucket->owner_id, qr/^c7483d612ac7f0c0/, 'have owner id' );
-    is( $first_bucket->owner_display_name, 'pedro_figueiredo', 'have display name' );
-    is( scalar @buckets, 6, 'have a bunch of buckets' );
-}
 
 my $bucket_name = 'net-amazon-s3-test-' . lc($aws_access_key_id) . '-'. time;
 
