@@ -4,11 +4,13 @@ use strict;
 use lib 'lib';
 use Digest::MD5::File qw(file_md5_hex);
 use Test::More;
+use Test::Deep;
+use FindBin;
 
 unless ( $ENV{'AMAZON_S3_EXPENSIVE_TESTS'} ) {
     plan skip_all => 'Testing this module for real costs money.';
 } else {
-    plan tests => 71 * 2 + 1;
+    plan tests => 37 * 2 + 1;
 }
 
 use_ok('Net::Amazon::S3');
@@ -47,35 +49,37 @@ for my $location ( undef, 'EU' ) {
         }
     ) or die $s3->err . ": " . $s3->errstr;
 
-    is( ref $bucket_obj,                      "Net::Amazon::S3::Bucket" );
+    isa_ok $bucket_obj, "Net::Amazon::S3::Bucket";
     my $expected_location = $location;
     $expected_location = 'us-east-1' unless defined $expected_location;
     $expected_location = 'eu-west-1' if $expected_location eq 'EU';
 
-    is( $bucket_obj->get_location_constraint, $expected_location );
+    is( $bucket_obj->get_location_constraint, $expected_location, "bucket created in expected region" );
 
     like_acl_allusers_read($bucket_obj);
-    ok( $bucket_obj->set_acl( { acl_short => 'private' } ) );
+    ok( $bucket_obj->set_acl( { acl_short => 'private' } ), 'make bucket private using query parameters' );
     unlike_acl_allusers_read($bucket_obj);
 
     # another way to get a bucket object (does no network I/O,
     # assumes it already exists).  Read Net::Amazon::S3::Bucket.
     $bucket_obj = $s3->bucket($bucketname);
-    is( ref $bucket_obj, "Net::Amazon::S3::Bucket" );
+    isa_ok $bucket_obj, "Net::Amazon::S3::Bucket";
 
     # fetch contents of the bucket
     # note prefix, marker, max_keys options can be passed in
     $response = $bucket_obj->list
         or die $s3->err . ": " . $s3->errstr;
 
-    is( $response->{bucket},       $bucketname );
-    is( $response->{prefix},       '' );
-    is( $response->{marker},       '' );
-    is( $response->{max_keys},     1_000 );
-    is( $response->{is_truncated}, 0 );
-    is_deeply( $response->{keys}, [] );
+    cmp_deeply $response, superhashof({
+        bucket       => $bucketname,
+        prefix       => '',
+        marker       => '',
+        max_keys     => 1_000,
+        is_truncated => 0,
+        keys         => [],
+    }, "list empty bucket");
 
-    is( undef, $bucket_obj->get_key("non-existing-key") );
+    is( undef, $bucket_obj->get_key("non-existing-key"), "get non existing key" );
 
     my $keyname = 'testing.txt';
 
@@ -100,7 +104,7 @@ for my $location ( undef, 'EU' ) {
 
         ok( $bucket_obj->set_acl(
                 { key => $keyname, acl_short => 'private' }
-            )
+            ), "change key policy of private using acl_short"
         );
 
         is_request_response_code(
@@ -113,7 +117,8 @@ for my $location ( undef, 'EU' ) {
                 {   key     => $keyname,
                     acl_xml => acl_xml_from_acl_short('public-read')
                 }
-            )
+            ),
+            "change key policy to public using acl_xml"
         );
 
         is_request_response_code(
@@ -126,7 +131,8 @@ for my $location ( undef, 'EU' ) {
                 {   key     => $keyname,
                     acl_xml => acl_xml_from_acl_short('private')
                 }
-            )
+            ),
+            "change key policy to private using acl_xml"
         );
 
         is_request_response_code(
@@ -162,7 +168,8 @@ for my $location ( undef, 'EU' ) {
 
         ok( $bucket_obj->set_acl(
                 { key => $keyname2, acl_short => 'public-read' }
-            )
+            ),
+            "change private key to public"
         );
 
         is_request_response_code(
@@ -208,97 +215,110 @@ for my $location ( undef, 'EU' ) {
         # Expect a nonexistent key copy to fail
         ok( !$bucket_obj->copy_key( "newkey", "/$bucketname/$keyname2" ),
             "Copying a nonexistent key fails" );
-
     }
 
     # list keys in the bucket
     $response = $bucket_obj->list
         or die $s3->err . ": " . $s3->errstr;
-    is( $response->{bucket},       $bucketname );
-    is( $response->{prefix},       '' );
-    is( $response->{marker},       '' );
-    is( $response->{max_keys},     1_000 );
-    is( $response->{is_truncated}, 0 );
-    my @keys = @{ $response->{keys} };
-    is( @keys, 1 );
-    my $key = $keys[0];
-    is( $key->{key}, $keyname );
-
-    # the etag is the MD5 of the value
-    is( $key->{etag}, 'b9ece18c950afbfa6b0fdbfa4ff731d3' );
-    is( $key->{size}, 1 );
-
-    is( $key->{owner_id},          $OWNER_ID );
-    is( $key->{owner_displayname}, $OWNER_DISPLAYNAME );
+    cmp_deeply $response, superhashof({
+        bucket =>       $bucketname,
+        prefix =>       '',
+        marker =>       '',
+        max_keys =>     1_000,
+        is_truncated => 0,
+        keys => [ superhashof({
+            key               => $keyname,
+            # the etag is the MD5 of the value
+            etag              => 'b9ece18c950afbfa6b0fdbfa4ff731d3',
+            size              => 1,
+            owner_id          => $OWNER_ID,
+            owner_displayname => $OWNER_DISPLAYNAME,
+        })],
+    }), "list bucket with 1 key";
 
     # You can't delete a bucket with things in it
-    ok( !$bucket_obj->delete_bucket() );
+    ok( !$bucket_obj->delete_bucket(), "cannot delete non-empty bucket" );
 
     $bucket_obj->delete_key($keyname);
 
     # now play with the file methods
-    my $readme_md5  = file_md5_hex('README.md');
-    my $readme_size = -s 'README.md';
+    my $README_FILE = "$FindBin::Bin/../README.md";
+    my $README_DEST = "$FindBin::Bin/README.md";
+    my $readme_md5  = file_md5_hex($README_FILE);
+    my $readme_size = -s $README_FILE;
     $keyname .= "2";
     $bucket_obj->add_key_filename(
-        $keyname, 'README.md',
+        $keyname, $README_FILE,
         {   content_type        => 'text/plain',
             'x-amz-meta-colour' => 'orangy',
         }
     );
 
-    $response = $bucket_obj->get_key($keyname);
-    is( $response->{content_type}, 'text/plain' );
-    like( $response->{value}, qr/Amazon Digital Services/ );
-    is( $response->{etag},                $readme_md5 );
-    is( $response->{'x-amz-meta-colour'}, 'orangy' );
-    is( $response->{content_length},      $readme_size );
+    $response               =  $bucket_obj->get_key($keyname);
+    cmp_deeply $response, superhashof({
+        content_type        => 'text/plain',
+        value               => re( qr/Amazon Digital Services/ ),
+        etag                => $readme_md5,
+        'x-amz-meta-colour' => 'orangy',
+        content_length      => $readme_size,
+    }), "fetch key-from-file into memory";
 
-    unlink('t/README.md');
-    $response = $bucket_obj->get_key_filename( $keyname, undef, 't/README.md' );
+    unlink($README_DEST);
+    $response = $bucket_obj->get_key_filename( $keyname, undef, $README_DEST );
 
-    is( $response->{content_type},        'text/plain' );
-    is( $response->{value},               '' );
-    is( $response->{etag},                $readme_md5 );
-    is( file_md5_hex('t/README.md'),      $readme_md5 );
-    is( $response->{'x-amz-meta-colour'}, 'orangy' );
-    is( $response->{content_length},      $readme_size );
+    cmp_deeply $response, superhashof({
+        content_type        => 'text/plain',
+        value               => '',
+        etag                => $readme_md5,
+        'x-amz-meta-colour' => 'orangy',
+        content_length      => $readme_size,
+    }), "fetch key-from-file into file";
 
+    is( file_md5_hex($README_DEST), $readme_md5, "downloaded key-from-file checksum match" );
     $bucket_obj->delete_key($keyname);
 
     # try empty files
     $keyname .= "3";
     $bucket_obj->add_key( $keyname, '' );
     $response = $bucket_obj->get_key($keyname);
-    is( $response->{value},          '' );
-    is( $response->{etag},           'd41d8cd98f00b204e9800998ecf8427e' );
-    is( $response->{content_type},   'binary/octet-stream' );
-    is( $response->{content_length}, 0 );
+
+    cmp_deeply $response, superhashof({
+        value          => '',
+        etag           => 'd41d8cd98f00b204e9800998ecf8427e',
+        content_type   => 'binary/octet-stream',
+        content_length => 0,
+    }), "fetch empty key into memory";
+
     $bucket_obj->delete_key($keyname);
 
     # how about using add_key_filename?
+    my $EMPTY_FILE = "$FindBin::Bin/empty";
     $keyname .= '4';
-    open FILE, ">", "t/empty" or die "Can't open t/empty for write: $!";
+    open FILE, ">", $EMPTY_FILE or die "Can't open $EMPTY_FILE for write: $!";
     close FILE;
-    $bucket_obj->add_key_filename( $keyname, 't/empty' );
+    $bucket_obj->add_key_filename( $keyname, $EMPTY_FILE );
     $response = $bucket_obj->get_key($keyname);
-    is( $response->{value},          '' );
-    is( $response->{etag},           'd41d8cd98f00b204e9800998ecf8427e' );
-    is( $response->{content_type},   'binary/octet-stream' );
-    is( $response->{content_length}, 0 );
+    cmp_deeply $response, superhashof({
+        value          => '',
+        etag           => 'd41d8cd98f00b204e9800998ecf8427e',
+        content_type   => 'binary/octet-stream',
+        content_length => 0,
+    }), "fetch empty-key-from-file into memory";
     $bucket_obj->delete_key($keyname);
-    unlink 't/empty';
+    unlink $EMPTY_FILE;
 
     # fetch contents of the bucket
     # note prefix, marker, max_keys options can be passed in
     $response = $bucket_obj->list
         or die $s3->err . ": " . $s3->errstr;
-    is( $response->{bucket},       $bucketname );
-    is( $response->{prefix},       '' );
-    is( $response->{marker},       '' );
-    is( $response->{max_keys},     1_000 );
-    is( $response->{is_truncated}, 0 );
-    is_deeply( $response->{keys}, [] );
+    cmp_deeply $response, superhashof({
+        bucket       => $bucketname,
+        prefix       => '',
+        marker       => '',
+        max_keys     => 1_000,
+        is_truncated => 0,
+        keys         => [],
+    }), "list bucket with all keys deleted";
 
     ok( $bucket_obj->delete_bucket() );
 }
