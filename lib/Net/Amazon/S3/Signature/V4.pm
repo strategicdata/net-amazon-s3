@@ -14,6 +14,10 @@ use namespace::clean;
 
 extends 'Net::Amazon::S3::Signature';
 
+sub enforce_use_virtual_host {
+    1;
+}
+
 sub _bucket_region {
     my ($self) = @_;
 

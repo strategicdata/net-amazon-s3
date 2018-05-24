@@ -18,6 +18,10 @@ extends 'Net::Amazon::S3::Signature';
 
 my $AMAZON_HEADER_PREFIX = 'x-amz-';
 
+sub enforce_use_virtual_host {
+    0;
+}
+
 sub sign_request {
     my ($self, $request) = @_;
 

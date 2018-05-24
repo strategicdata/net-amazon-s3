@@ -146,7 +146,13 @@ has 'secure' => ( is => 'ro', isa => 'Bool', required => 0, default => 0 );
 has 'timeout' => ( is => 'ro', isa => 'Num',  required => 0, default => 30 );
 has 'retry'   => ( is => 'ro', isa => 'Bool', required => 0, default => 0 );
 has 'host'    => ( is => 'ro', isa => 'Str',  required => 0, default => 's3.amazonaws.com' );
-has 'use_virtual_host' => ( is => 'rw', isa => 'Bool', required => 0, default => 0 );
+has 'use_virtual_host' => (
+    is => 'ro',
+    isa => 'Bool',
+    required => 0,
+    lazy => 1,
+    default => sub { $_[0]->authorization_method->enforce_use_virtual_host },
+);
 has 'libxml' => ( is => 'rw', isa => 'XML::LibXML',    required => 0 );
 has 'ua'     => ( is => 'rw', isa => 'LWP::UserAgent', required => 0 );
 has 'err'    => ( is => 'rw', isa => 'Maybe[Str]',     required => 0 );
