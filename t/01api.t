@@ -7,11 +7,23 @@ use Test::More;
 use Test::Deep;
 use FindBin;
 
-unless ( $ENV{'AMAZON_S3_EXPENSIVE_TESTS'} ) {
-    plan skip_all => 'Testing this module for real costs money.';
-} else {
-    plan tests => 37 * 2 + 1;
-}
+my $DEFAULT_TEST_LOCATIONS = 'us-east-1,eu-west-1';
+
+plan skip_all => 'Testing this module for real costs money. Enable it by setting true value to env variable AMAZON_S3_EXPENSIVE_TESTS'
+    unless $ENV{'AMAZON_S3_EXPENSIVE_TESTS'};
+
+plan skip_all => 'Required env variable AWS_ACCESS_KEY_ID not set.'
+    unless $ENV{'AWS_ACCESS_KEY_ID'};
+
+plan skip_all => 'Required env variable AWS_ACCESS_KEY_SECRET not set.'
+    unless $ENV{'AWS_ACCESS_KEY_SECRET'};
+
+diag "AMAZON_S3_TEST_LOCATIONS not set, using default $DEFAULT_TEST_LOCATIONS"
+    unless $ENV{'AMAZON_S3_TEST_LOCATIONS'};
+
+my @locations = split /,/, ($ENV{'AMAZON_S3_TEST_LOCATIONS'} || $DEFAULT_TEST_LOCATIONS);
+
+plan tests => 37 * @locations + 1;
 
 use_ok('Net::Amazon::S3');
 
@@ -33,7 +45,7 @@ my $response = $s3->buckets;
 $OWNER_ID          = $response->{owner_id};
 $OWNER_DISPLAYNAME = $response->{owner_displayname};
 
-for my $location ( undef, 'EU' ) {
+for my $location ( @locations ) {
 
   # create a bucket
   # make sure it's a valid hostname for EU testing
