@@ -17,6 +17,7 @@ Revision history for Perl module Net::Amazon::S3:
      - add ability to set use_virtual_host to use virtual host method
        of making requests which eliminate having to set the region
        endpoint of a bucket. (patch by Christian Lackas)
+     - Add V4 support (patch by Branislav Zahradník)
 
 0.80 Sun Apr 12 12:33:19 GMT 2015
      - Fixed a bug in ETag validation (patch by Ali Anari)
@@ -25,7 +26,7 @@ Revision history for Perl module Net::Amazon::S3:
      - Add get_callback to Net::Amazon::S3::Client:Object
      - Add support for using IAM credentials when running on EC2,
        rather than hard coding access key and secret key.
-     - Add support for aws_session_token in addition to access and secret key.     
+     - Add support for aws_session_token in addition to access and secret key.
      - Remove code that determined if bucket can be used as a DNS Hostname as it was flawed.
      - Fix a bug where if a bucket contained a key 0 it would not be possible to be retrieved.
      - Add support for
