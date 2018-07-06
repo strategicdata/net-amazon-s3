@@ -8,15 +8,9 @@ use XML::LibXML;
 
 extends 'Net::Amazon::S3::Request::Object';
 
-has 'upload_id' => ( is => 'ro', isa => 'Str',        required => 1 );
+with 'Net::Amazon::S3::Request::Role::Query::Param::Upload_id';
 
 __PACKAGE__->meta->make_immutable;
-
-sub _request_query_params {
-    my ($self) = @_;
-
-    return ( uploadId => $self->upload_id );
-}
 
 sub http_request {
   my $self = shift;

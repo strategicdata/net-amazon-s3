@@ -4,11 +4,10 @@ use Moose 0.85;
 use MooseX::StrictConstructor 0.16;
 extends 'Net::Amazon::S3::Request::Object';
 
-with 'Net::Amazon::S3::Role::Bucket';
+with 'Net::Amazon::S3::Request::Role::Query::Param::Upload_id';
+with 'Net::Amazon::S3::Request::Role::Query::Param::Part_number';
 
 has 'value'         => ( is => 'ro', isa => 'Str|CodeRef|ScalarRef',     required => 0 );
-has 'upload_id'     => ( is => 'ro', isa => 'Str',             required => 1 );
-has 'part_number'   => ( is => 'ro', isa => 'Int',             required => 1 );
 has 'copy_source_bucket'    => ( is => 'ro', isa => 'Str',     required => 0 );
 has 'copy_source_key'       => ( is => 'ro', isa => 'Str',     required => 0 );
 has 'acl_short'     => ( is => 'ro', isa => 'Maybe[AclShort]', required => 0 );
@@ -16,15 +15,6 @@ has 'headers' =>
     ( is => 'ro', isa => 'HashRef', required => 0, default => sub { {} } );
 
 __PACKAGE__->meta->make_immutable;
-
-sub _request_query_params {
-    my ($self) = @_;
-
-    return (
-        partNumber => $self->part_number,
-        uploadId => $self->upload_id,
-    );
-}
 
 sub http_request {
     my $self    = shift;

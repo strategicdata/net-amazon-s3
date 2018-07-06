@@ -7,28 +7,12 @@ extends 'Net::Amazon::S3::Request::Bucket';
 
 # ABSTRACT: An internal class to list a bucket
 
-has 'prefix'    => ( is => 'ro', isa => 'Maybe[Str]', required => 0 );
-has 'delimiter' => ( is => 'ro', isa => 'Maybe[Str]', required => 0 );
-has 'max_keys' =>
-    ( is => 'ro', isa => 'Maybe[Int]', required => 0, default => 1000 );
-has 'marker' => ( is => 'ro', isa => 'Maybe[Str]', required => 0 );
+with 'Net::Amazon::S3::Request::Role::Query::Param::Delimiter';
+with 'Net::Amazon::S3::Request::Role::Query::Param::Marker';
+with 'Net::Amazon::S3::Request::Role::Query::Param::Max_keys';
+with 'Net::Amazon::S3::Request::Role::Query::Param::Prefix';
 
 __PACKAGE__->meta->make_immutable;
-
-sub _request_query_params {
-    my ($self) = @_;
-
-    my %params;
-    foreach my $method ( qw(delimiter marker max_keys prefix) ) {
-        my $value = $self->$method;
-        next unless $value;
-        my $key = $method;
-        $key = 'max-keys' if $method eq 'max_keys';
-        $params{$key} = $value;
-    }
-
-    return %params;
-}
 
 sub http_request {
     my $self = shift;
