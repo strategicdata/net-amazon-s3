@@ -6,7 +6,8 @@ extends 'Net::Amazon::S3::Request::Bucket';
 
 # ABSTRACT: An internal class to set a bucket's access control
 
-has 'acl_short' => ( is => 'ro', isa => 'Maybe[AclShort]', required => 0 );
+with 'Net::Amazon::S3::Request::Role::HTTP::Header::Acl_short';
+
 has 'acl_xml'   => ( is => 'ro', isa => 'Maybe[Str]',      required => 0 );
 
 with 'Net::Amazon::S3::Request::Role::Query::Action::Acl';
@@ -25,14 +26,9 @@ sub http_request {
         confess "can not provide both acl_xml and acl_short";
     }
 
-    my $headers
-        = ( $self->acl_short )
-        ? { 'x-amz-acl' => $self->acl_short }
-        : {};
     my $xml = $self->acl_xml || '';
 
     return $self->_build_http_request(
-        headers => $headers,
         content => $xml,
     );
 }
