@@ -23,7 +23,7 @@ sub http_request {
     my $path = $self->_uri;
 
     my @post;
-    foreach my $method ( qw(prefix delimiter max_keys marker) ) {
+    foreach my $method ( qw(delimiter marker max_keys prefix) ) {
         my $value = $self->$method;
         next unless $value;
         my $key = $method;

@@ -24,7 +24,7 @@ behaves_like_net_amazon_s3_request 'list bucket with prefix' => (
     with_prefix     => 'some-prefix',
 
     expect_request_method   => 'GET',
-    expect_request_path     => 'some-bucket/?prefix=some-prefix&max-keys=1000',
+    expect_request_path     => 'some-bucket/?max-keys=1000&prefix=some-prefix',
     expect_request_headers  => { },
     expect_request_content  => '',
 );
@@ -57,7 +57,7 @@ behaves_like_net_amazon_s3_request 'list bucket with marker' => (
     with_marker     => 'x',
 
     expect_request_method   => 'GET',
-    expect_request_path     => 'some-bucket/?max-keys=1000&marker=x',
+    expect_request_path     => 'some-bucket/?marker=x&max-keys=1000',
     expect_request_headers  => { },
     expect_request_content  => '',
 );

@@ -53,7 +53,7 @@ expect_client_bucket_objects_list 'list objects with filters (version 1)' => (
     with_prefix             => 'N',
     with_marker             => 'Ned',
     with_max_keys           => 40,
-    expect_request          => { GET => 'https://some-bucket.s3.amazonaws.com/?prefix=N&max-keys=1000' },
+    expect_request          => { GET => 'https://some-bucket.s3.amazonaws.com/?max-keys=1000&prefix=N' },
     expect_data             => methods (get_more => [
         all (
             obj_isa ('Net::Amazon::S3::Client::Object'),
@@ -98,7 +98,7 @@ expect_client_bucket_objects_list 'list objects with prefix and delimiter (versi
     with_response_data      => list_bucket_objects_v1_with_prefix_and_delimiter,
     with_delimiter          => '/',
     with_prefix             => 'photos/2006/',
-    expect_request          => { GET => 'https://some-bucket.s3.amazonaws.com/?prefix=photos%2F2006%2F&delimiter=%2F&max-keys=1000' },
+    expect_request          => { GET => 'https://some-bucket.s3.amazonaws.com/?delimiter=%2F&max-keys=1000&prefix=photos%2F2006%2F' },
     expect_data             => methods (get_more => undef),
 );
 

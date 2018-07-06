@@ -59,7 +59,7 @@ expect_api_bucket_objects_list 'list objects with filters (version 1)' => (
     with_prefix             => 'N',
     with_marker             => 'Ned',
     with_max_keys           => 40,
-    expect_request          => { GET => 'https://some-bucket.s3.amazonaws.com/?prefix=N&max-keys=40&marker=Ned' },
+    expect_request          => { GET => 'https://some-bucket.s3.amazonaws.com/?marker=Ned&max-keys=40&prefix=N' },
     expect_data             => {
         bucket => 'some-bucket',
         prefix => 'N',
@@ -119,7 +119,7 @@ expect_api_bucket_objects_list 'list objects with prefix and delimiter (version 
     with_response_data      => list_bucket_objects_v1_with_prefix_and_delimiter,
     with_delimiter          => '/',
     with_prefix             => 'photos/2006/',
-    expect_request          => { GET => 'https://some-bucket.s3.amazonaws.com/?prefix=photos%2F2006%2F&delimiter=%2F' },
+    expect_request          => { GET => 'https://some-bucket.s3.amazonaws.com/?delimiter=%2F&prefix=photos%2F2006%2F' },
     expect_data             => {
         bucket => 'some-bucket',
         prefix => 'photos/2006/',
