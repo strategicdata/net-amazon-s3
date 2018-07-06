@@ -10,6 +10,12 @@ has key => (
     required => 1,
 );
 
+override _request_path => sub {
+    my ($self) = @_;
+
+    return super . (join '/', map {$self->s3->_urlencode($_)} split /\//, $self->key);
+};
+
 __PACKAGE__->meta->make_immutable;
 
 1;

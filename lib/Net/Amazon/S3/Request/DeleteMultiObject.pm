@@ -45,7 +45,7 @@ sub http_request {
     #build signed request
     return $self->_build_http_request(
         method  => 'POST',
-        path    => $self->_uri . '?delete',
+        path    => $self->_request_path . '?delete',
         content => $content,
         headers => $header_spec,
     );

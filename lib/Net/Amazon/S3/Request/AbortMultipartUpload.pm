@@ -18,7 +18,7 @@ sub http_request {
   #build signed request
   return $self->_build_http_request(
     method  => 'DELETE',
-    path    => $self->_uri( $self->key ) . '?uploadId=' . $self->upload_id,
+    path    => $self->_request_path . '?uploadId=' . $self->upload_id,
   );
 }
 

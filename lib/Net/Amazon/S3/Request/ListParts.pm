@@ -23,7 +23,7 @@ sub http_request {
 
     return $self->_build_http_request(
         method  => 'GET',
-        path    => $self->_uri( $self->key ).'?uploadId='.$self->upload_id,
+        path    => $self->_request_path.'?uploadId='.$self->upload_id,
         headers => $self->headers,
     );
 }

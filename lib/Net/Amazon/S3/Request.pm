@@ -87,23 +87,16 @@ has 's3' => ( is => 'ro', isa => 'Net::Amazon::S3', required => 1 );
 
 __PACKAGE__->meta->make_immutable;
 
-sub _uri {
-    my ( $self, $key ) = @_;
-    my $bucket = $self->bucket->bucket;
-
-    my $uri = (defined($key))
-        ? $bucket . "/" . (join '/', map {$self->s3->_urlencode($_)} split /\//, $key)
-        : $bucket . "/";
-
-    # Although Amazon's Signature 4 test suite explicitely handles // it appears
-    # it's inconsistent with their implementation so removing it here
-    $uri =~ s{//+}{/}g;
-
-    return $uri;
+sub _request_path {
+    '';
 }
 
 sub _build_signed_request {
     my ($self, %params) = @_;
+
+    # Although Amazon's Signature 4 test suite explicitely handles // it appears
+    # it's inconsistent with their implementation so removing it here
+    $params{path} =~ s{//+}{/}g;
 
     return Net::Amazon::S3::HTTPRequest->new(
         %params,

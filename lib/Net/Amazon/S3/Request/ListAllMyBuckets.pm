@@ -12,7 +12,7 @@ sub http_request {
     my $self    = shift;
     return $self->_build_http_request(
         method => 'GET',
-        path   => '',
+        path   => $self->_request_path,
         use_virtual_host => 0,
         authorization_method => 'Net::Amazon::S3::Signature::V2',
     );

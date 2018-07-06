@@ -24,7 +24,7 @@ sub http_request {
 
     return $self->_build_http_request(
         method  => 'POST',
-        path    => $self->_uri( $self->key ).'?uploads',
+        path    => $self->_request_path.'?uploads',
         headers => $self->headers,
     );
 }

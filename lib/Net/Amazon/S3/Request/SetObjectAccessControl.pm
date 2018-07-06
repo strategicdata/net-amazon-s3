@@ -30,7 +30,7 @@ sub http_request {
 
     return $self->_build_http_request(
         method  => 'PUT',
-        path    => $self->_uri( $self->key ) . '?acl',
+        path    => $self->_request_path . '?acl',
         headers => $headers,
         content => $xml,
     );

@@ -18,7 +18,7 @@ __PACKAGE__->meta->make_immutable;
 sub http_request {
     my $self = shift;
 
-    my $path = $self->_uri;
+    my $path = $self->_request_path;
 
     my @post;
     foreach my $method ( qw(delimiter marker max_keys prefix) ) {

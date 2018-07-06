@@ -13,7 +13,7 @@ sub http_request {
 
     return $self->_build_http_request(
         method => 'GET',
-        path   => $self->_uri('') . '?location',
+        path   => $self->_request_path . '?location',
     );
 }
 

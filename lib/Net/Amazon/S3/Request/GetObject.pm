@@ -15,14 +15,14 @@ sub http_request {
 
     return $self->_build_http_request(
         method => $self->method,
-        path   => $self->_uri( $self->key ),
+        path   => $self->_request_path,
     );
 }
 
 sub query_string_authentication_uri {
     my ( $self, $expires, $query_form ) = @_;
 
-    my $uri = URI->new( $self->_uri( $self->key ) );
+    my $uri = URI->new( $self->_request_path );
     $uri->query_form( %$query_form ) if $query_form;
 
     return $self->_build_signed_request(
