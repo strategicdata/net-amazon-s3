@@ -16,8 +16,6 @@ sub http_request {
     return $self->_build_http_request(
         method => 'GET',
         path   => $self->_uri('') . '?location',
-        use_virtual_host => 0,
-        authorization_method => 'Net::Amazon::S3::Signature::V2',
     );
 }
 
