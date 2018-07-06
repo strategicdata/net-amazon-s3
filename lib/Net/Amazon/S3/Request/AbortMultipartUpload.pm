@@ -24,7 +24,6 @@ sub http_request {
   #build signed request
   return $self->_build_http_request(
     method  => 'DELETE',
-    path    => $self->_request_path . $self->_request_query_string,
   );
 }
 

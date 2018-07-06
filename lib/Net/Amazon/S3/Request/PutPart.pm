@@ -41,7 +41,6 @@ sub http_request {
 
     return $self->_build_http_request(
         method  => 'PUT',
-        path    => $self->_request_path . $self->_request_query_string,
         headers => $headers,
         content => scalar( defined( $self->value ) ? $self->value : '' ),
     );

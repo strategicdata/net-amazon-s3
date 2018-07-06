@@ -33,11 +33,8 @@ sub _request_query_params {
 sub http_request {
     my $self = shift;
 
-    my $path = $self->_request_path;
-
     return $self->_build_http_request(
         method => 'GET',
-        path   => $path . $self->_request_query_string,
     );
 }
 

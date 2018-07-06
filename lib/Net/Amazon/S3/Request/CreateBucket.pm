@@ -30,7 +30,6 @@ sub http_request {
 
     return $self->_build_http_request(
         method  => 'PUT',
-        path    => $self->_request_path,
         headers => $headers,
         content => $content,
         region  => 'us-east-1',
