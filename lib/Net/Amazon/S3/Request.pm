@@ -94,6 +94,23 @@ sub _request_path {
 sub _request_query_action {
 }
 
+sub _request_query_params {
+}
+
+sub _request_query_string {
+    my ($self) = @_;
+
+    my %query_params = $self->_request_query_params;
+
+    my @parts = (
+        ($self->_request_query_action) x!! $self->_request_query_action,
+        map "$_=${\ $self->s3->_urlencode( $query_params{$_} ) }", sort keys %query_params,
+    );
+
+    return '' unless @parts;
+    return '?' . join '&', @parts;
+}
+
 sub _build_signed_request {
     my ($self, %params) = @_;
 

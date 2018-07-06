@@ -26,7 +26,7 @@ sub http_request {
 
     return $self->_build_http_request(
         method  => 'POST',
-        path    => $self->_request_path.'?' . $self->_request_query_action,
+        path    => $self->_request_path . $self->_request_query_string,
         headers => $self->headers,
     );
 }

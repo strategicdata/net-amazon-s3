@@ -15,32 +15,30 @@ has 'marker' => ( is => 'ro', isa => 'Maybe[Str]', required => 0 );
 
 __PACKAGE__->meta->make_immutable;
 
-sub http_request {
-    my $self = shift;
+sub _request_query_params {
+    my ($self) = @_;
 
-    my $path = $self->_request_path;
-
-    my @post;
+    my %params;
     foreach my $method ( qw(delimiter marker max_keys prefix) ) {
         my $value = $self->$method;
         next unless $value;
         my $key = $method;
         $key = 'max-keys' if $method eq 'max_keys';
-        push @post, $key . "=" . $self->_urlencode($value);
+        $params{$key} = $value;
     }
-    if (@post) {
-        $path .= '?' . join( '&', @post );
-    }
+
+    return %params;
+}
+
+sub http_request {
+    my $self = shift;
+
+    my $path = $self->_request_path;
 
     return $self->_build_http_request(
         method => 'GET',
-        path   => $path,
+        path   => $path . $self->_request_query_string,
     );
-}
-
-sub _urlencode {
-    my ( $self, $unencoded ) = @_;
-    return uri_escape_utf8( $unencoded, '^A-Za-z0-9_-' );
 }
 
 1;

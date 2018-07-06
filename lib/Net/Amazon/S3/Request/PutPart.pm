@@ -17,6 +17,15 @@ has 'headers' =>
 
 __PACKAGE__->meta->make_immutable;
 
+sub _request_query_params {
+    my ($self) = @_;
+
+    return (
+        partNumber => $self->part_number,
+        uploadId => $self->upload_id,
+    );
+}
+
 sub http_request {
     my $self    = shift;
     my $headers = $self->headers;
@@ -32,11 +41,7 @@ sub http_request {
 
     return $self->_build_http_request(
         method  => 'PUT',
-        path    => $self->_request_path .
-                   '?partNumber=' .
-                   $self->part_number .
-                   '&uploadId=' .
-                   $self->upload_id,
+        path    => $self->_request_path . $self->_request_query_string,
         headers => $headers,
         content => scalar( defined( $self->value ) ? $self->value : '' ),
     );

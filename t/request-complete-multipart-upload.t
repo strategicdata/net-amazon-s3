@@ -20,7 +20,7 @@ behaves_like_net_amazon_s3_request 'abort multipart upload with empty parts' => 
     with_part_numbers   => [ ],
 
     expect_request_method   => 'POST',
-    expect_request_path     => 'some-bucket/some/key?uploadId=123&456',
+    expect_request_path     => 'some-bucket/some/key?uploadId=123%26456',
     expect_request_headers  => {
         'Content-MD5' => ignore,
         'Content-Length' => ignore,
@@ -40,7 +40,7 @@ behaves_like_net_amazon_s3_request 'abort multipart upload with some parts' => (
     with_part_numbers   => [ 1, 2 ],
 
     expect_request_method   => 'POST',
-    expect_request_path     => 'some-bucket/some/key?uploadId=123&456',
+    expect_request_path     => 'some-bucket/some/key?uploadId=123%26456',
     expect_request_headers  => {
         'Content-MD5' => ignore,
         'Content-Length' => ignore,

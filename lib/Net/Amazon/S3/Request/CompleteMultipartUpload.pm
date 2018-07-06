@@ -14,6 +14,12 @@ has 'upload_id'     => ( is => 'ro', isa => 'Str',    required => 1 );
 
 __PACKAGE__->meta->make_immutable;
 
+sub _request_query_params {
+    my ($self) = @_;
+
+    return ( uploadId => $self->upload_id );
+}
+
 sub http_request {
     my $self = shift;
 
@@ -49,7 +55,7 @@ sub http_request {
     #build signed request
     return $self->_build_http_request(
         method  => 'POST',
-        path    => $self->_request_path. '?uploadId='.$self->upload_id,
+        path    => $self->_request_path . $self->_request_query_string,
         content => $content,
         headers => $header_spec,
     );
