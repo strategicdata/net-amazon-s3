@@ -2,11 +2,8 @@ package Net::Amazon::S3::Request::GetObject;
 
 use Moose 0.85;
 use MooseX::StrictConstructor 0.16;
-extends 'Net::Amazon::S3::Request';
+extends 'Net::Amazon::S3::Request::Object';
 
-with 'Net::Amazon::S3::Role::Bucket';
-
-has 'key'    => ( is => 'ro', isa => 'Str',        required => 1 );
 has 'method' => ( is => 'ro', isa => 'HTTPMethod', required => 1 );
 
 # ABSTRACT: An internal class to get an object

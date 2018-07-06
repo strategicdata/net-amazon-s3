@@ -2,11 +2,9 @@ package Net::Amazon::S3::Request::SetBucketAccessControl;
 
 use Moose 0.85;
 use MooseX::StrictConstructor 0.16;
-extends 'Net::Amazon::S3::Request';
+extends 'Net::Amazon::S3::Request::Bucket';
 
 # ABSTRACT: An internal class to set a bucket's access control
-
-with 'Net::Amazon::S3::Role::Bucket';
 
 has 'acl_short' => ( is => 'ro', isa => 'Maybe[AclShort]', required => 0 );
 has 'acl_xml'   => ( is => 'ro', isa => 'Maybe[Str]',      required => 0 );

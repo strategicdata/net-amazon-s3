@@ -2,7 +2,7 @@ package Net::Amazon::S3::Request::ListAllMyBuckets;
 
 use Moose 0.85;
 use MooseX::StrictConstructor 0.16;
-extends 'Net::Amazon::S3::Request';
+extends 'Net::Amazon::S3::Request::Service';
 
 # ABSTRACT: An internal class to list all buckets
 

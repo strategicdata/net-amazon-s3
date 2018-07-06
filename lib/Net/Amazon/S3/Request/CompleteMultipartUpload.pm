@@ -6,12 +6,9 @@ use MIME::Base64;
 use Carp qw/croak/;
 use XML::LibXML;
 
-extends 'Net::Amazon::S3::Request';
-
-with 'Net::Amazon::S3::Role::Bucket';
+extends 'Net::Amazon::S3::Request::Object';
 
 has 'etags'         => ( is => 'ro', isa => 'ArrayRef',   required => 1 );
-has 'key'           => ( is => 'ro', isa => 'Str',        required => 1 );
 has 'part_numbers'  => ( is => 'ro', isa => 'ArrayRef',   required => 1 );
 has 'upload_id'     => ( is => 'ro', isa => 'Str',    required => 1 );
 

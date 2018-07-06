@@ -3,11 +3,9 @@ package Net::Amazon::S3::Request::ListBucket;
 use Moose 0.85;
 use MooseX::StrictConstructor 0.16;
 use URI::Escape qw(uri_escape_utf8);
-extends 'Net::Amazon::S3::Request';
+extends 'Net::Amazon::S3::Request::Bucket';
 
 # ABSTRACT: An internal class to list a bucket
-
-with 'Net::Amazon::S3::Role::Bucket';
 
 has 'prefix'    => ( is => 'ro', isa => 'Maybe[Str]', required => 0 );
 has 'delimiter' => ( is => 'ro', isa => 'Maybe[Str]', required => 0 );

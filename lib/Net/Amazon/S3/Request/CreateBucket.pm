@@ -1,11 +1,9 @@
 package Net::Amazon::S3::Request::CreateBucket;
 
 use Moose 0.85;
-extends 'Net::Amazon::S3::Request';
+extends 'Net::Amazon::S3::Request::Bucket';
 
 # ABSTRACT: An internal class to create a bucket
-
-with 'Net::Amazon::S3::Role::Bucket';
 
 has 'acl_short' => ( is => 'ro', isa => 'Maybe[AclShort]', required => 0 );
 has 'location_constraint' =>

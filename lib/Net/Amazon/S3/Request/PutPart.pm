@@ -2,11 +2,10 @@ package Net::Amazon::S3::Request::PutPart;
 
 use Moose 0.85;
 use MooseX::StrictConstructor 0.16;
-extends 'Net::Amazon::S3::Request';
+extends 'Net::Amazon::S3::Request::Object';
 
 with 'Net::Amazon::S3::Role::Bucket';
 
-has 'key'           => ( is => 'ro', isa => 'Str',             required => 1 );
 has 'value'         => ( is => 'ro', isa => 'Str|CodeRef|ScalarRef',     required => 0 );
 has 'upload_id'     => ( is => 'ro', isa => 'Str',             required => 1 );
 has 'part_number'   => ( is => 'ro', isa => 'Int',             required => 1 );

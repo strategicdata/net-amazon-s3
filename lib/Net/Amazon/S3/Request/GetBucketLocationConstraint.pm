@@ -2,11 +2,9 @@ package Net::Amazon::S3::Request::GetBucketLocationConstraint;
 
 use Moose 0.85;
 use MooseX::StrictConstructor 0.16;
-extends 'Net::Amazon::S3::Request';
+extends 'Net::Amazon::S3::Request::Bucket';
 
 # ABSTRACT: An internal class to get a bucket's location constraint
-
-with 'Net::Amazon::S3::Role::Bucket';
 
 __PACKAGE__->meta->make_immutable;
 

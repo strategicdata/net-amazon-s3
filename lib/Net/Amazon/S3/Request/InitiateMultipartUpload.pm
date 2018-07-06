@@ -2,11 +2,8 @@ package Net::Amazon::S3::Request::InitiateMultipartUpload;
 
 use Moose 0.85;
 use MooseX::StrictConstructor 0.16;
-extends 'Net::Amazon::S3::Request';
+extends 'Net::Amazon::S3::Request::Object';
 
-with 'Net::Amazon::S3::Role::Bucket';
-
-has 'key'        => ( is => 'ro', isa => 'Str',             required => 1 );
 has 'acl_short'  => ( is => 'ro', isa => 'Maybe[AclShort]', required => 0 );
 has 'headers' =>
     ( is => 'ro', isa => 'HashRef', required => 0, default => sub { {} } );

@@ -5,9 +5,7 @@ use Digest::MD5 qw/md5 md5_hex/;
 use MIME::Base64;
 use Carp qw/croak/;
 
-extends 'Net::Amazon::S3::Request';
-
-with 'Net::Amazon::S3::Role::Bucket';
+extends 'Net::Amazon::S3::Request::Bucket';
 
 has 'keys'      => ( is => 'ro', isa => 'ArrayRef',   required => 1 );
 

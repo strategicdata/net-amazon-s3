@@ -6,11 +6,8 @@ use MIME::Base64;
 use Carp qw/croak/;
 use XML::LibXML;
 
-extends 'Net::Amazon::S3::Request';
+extends 'Net::Amazon::S3::Request::Object';
 
-with 'Net::Amazon::S3::Role::Bucket';
-
-has 'key'       => ( is => 'ro', isa => 'Str',        required => 1 );
 has 'upload_id' => ( is => 'ro', isa => 'Str',        required => 1 );
 
 __PACKAGE__->meta->make_immutable;
