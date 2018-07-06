@@ -9,6 +9,8 @@ has 'headers' =>
     ( is => 'ro', isa => 'HashRef', required => 0, default => sub { {} } );
 has 'encryption' => ( is => 'ro', isa => 'Maybe[Str]',      required => 0 );
 
+with 'Net::Amazon::S3::Request::Role::Query::Action::Uploads';
+
 __PACKAGE__->meta->make_immutable;
 
 sub http_request {
@@ -24,7 +26,7 @@ sub http_request {
 
     return $self->_build_http_request(
         method  => 'POST',
-        path    => $self->_request_path.'?uploads',
+        path    => $self->_request_path.'?' . $self->_request_query_action,
         headers => $self->headers,
     );
 }

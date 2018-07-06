@@ -6,6 +6,8 @@ extends 'Net::Amazon::S3::Request::Bucket';
 
 # ABSTRACT: An internal class to get a bucket's access control
 
+with 'Net::Amazon::S3::Request::Role::Query::Action::Acl';
+
 __PACKAGE__->meta->make_immutable;
 
 sub http_request {
@@ -13,7 +15,7 @@ sub http_request {
 
     return $self->_build_http_request(
         method => 'GET',
-        path   => $self->_request_path . '?acl',
+        path   => $self->_request_path . '?' . $self->_request_query_action,
     );
 }
 

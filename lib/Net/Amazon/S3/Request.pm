@@ -91,6 +91,9 @@ sub _request_path {
     '';
 }
 
+sub _request_query_action {
+}
+
 sub _build_signed_request {
     my ($self, %params) = @_;
 

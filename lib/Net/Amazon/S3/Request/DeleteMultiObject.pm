@@ -9,6 +9,8 @@ extends 'Net::Amazon::S3::Request::Bucket';
 
 has 'keys'      => ( is => 'ro', isa => 'ArrayRef',   required => 1 );
 
+with 'Net::Amazon::S3::Request::Role::Query::Action::Delete';
+
 __PACKAGE__->meta->make_immutable;
 
 sub http_request {
@@ -45,7 +47,7 @@ sub http_request {
     #build signed request
     return $self->_build_http_request(
         method  => 'POST',
-        path    => $self->_request_path . '?delete',
+        path    => $self->_request_path . '?' . $self->_request_query_action,
         content => $content,
         headers => $header_spec,
     );

@@ -9,6 +9,8 @@ extends 'Net::Amazon::S3::Request::Object';
 has 'acl_short' => ( is => 'ro', isa => 'Maybe[AclShort]', required => 0 );
 has 'acl_xml'   => ( is => 'ro', isa => 'Maybe[Str]',      required => 0 );
 
+with 'Net::Amazon::S3::Request::Role::Query::Action::Acl';
+
 __PACKAGE__->meta->make_immutable;
 
 sub http_request {
