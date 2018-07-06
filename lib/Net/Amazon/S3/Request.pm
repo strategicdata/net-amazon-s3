@@ -120,7 +120,8 @@ sub _http_request_path {
 sub _build_signed_request {
     my ($self, %params) = @_;
 
-    $params{path} = $self->_http_request_path unless exists $params{path};
+    $params{path}   = $self->_http_request_path   unless exists $params{path};
+    $params{method} = $self->_http_request_method unless exists $params{method};
 
     # Although Amazon's Signature 4 test suite explicitely handles // it appears
     # it's inconsistent with their implementation so removing it here
@@ -137,6 +138,12 @@ sub _build_http_request {
     my ($self, %params) = @_;
 
     return $self->_build_signed_request( %params )->http_request;
+}
+
+sub http_request {
+    my $self = shift;
+
+    return $self->_build_http_request;
 }
 
 1;

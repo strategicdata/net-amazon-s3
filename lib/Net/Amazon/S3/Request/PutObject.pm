@@ -6,6 +6,8 @@ extends 'Net::Amazon::S3::Request::Object';
 
 # ABSTRACT: An internal class to put an object
 
+with 'Net::Amazon::S3::Request::Role::HTTP::Method::PUT';
+
 has 'value'     => ( is => 'ro', isa => 'Str|CodeRef|ScalarRef',     required => 1 );
 has 'acl_short' => ( is => 'ro', isa => 'Maybe[AclShort]', required => 0 );
 has 'headers' =>
@@ -26,7 +28,6 @@ sub http_request {
     }
 
     return $self->_build_http_request(
-        method  => 'PUT',
         headers => $self->headers,
         content => $self->value,
     );

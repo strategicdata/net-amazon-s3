@@ -6,12 +6,13 @@ extends 'Net::Amazon::S3::Request::Service';
 
 # ABSTRACT: An internal class to list all buckets
 
+with 'Net::Amazon::S3::Request::Role::HTTP::Method::GET';
+
 __PACKAGE__->meta->make_immutable;
 
 sub http_request {
     my $self    = shift;
     return $self->_build_http_request(
-        method => 'GET',
         use_virtual_host => 0,
         authorization_method => 'Net::Amazon::S3::Signature::V2',
     );

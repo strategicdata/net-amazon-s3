@@ -9,6 +9,7 @@ use XML::LibXML;
 extends 'Net::Amazon::S3::Request::Object';
 
 with 'Net::Amazon::S3::Request::Role::Query::Param::Upload_id';
+with 'Net::Amazon::S3::Request::Role::HTTP::Method::POST';
 
 has 'etags'         => ( is => 'ro', isa => 'ArrayRef',   required => 1 );
 has 'part_numbers'  => ( is => 'ro', isa => 'ArrayRef',   required => 1 );
@@ -49,7 +50,6 @@ sub http_request {
 
     #build signed request
     return $self->_build_http_request(
-        method  => 'POST',
         content => $content,
         headers => $header_spec,
     );

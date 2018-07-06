@@ -9,17 +9,9 @@ use XML::LibXML;
 extends 'Net::Amazon::S3::Request::Object';
 
 with 'Net::Amazon::S3::Request::Role::Query::Param::Upload_id';
+with 'Net::Amazon::S3::Request::Role::HTTP::Method::DELETE';
 
 __PACKAGE__->meta->make_immutable;
-
-sub http_request {
-  my $self = shift;
-
-  #build signed request
-  return $self->_build_http_request(
-    method  => 'DELETE',
-  );
-}
 
 1;
 

@@ -10,6 +10,7 @@ has 'headers' =>
 has 'encryption' => ( is => 'ro', isa => 'Maybe[Str]',      required => 0 );
 
 with 'Net::Amazon::S3::Request::Role::Query::Action::Uploads';
+with 'Net::Amazon::S3::Request::Role::HTTP::Method::POST';
 
 __PACKAGE__->meta->make_immutable;
 
@@ -25,7 +26,6 @@ sub http_request {
     }
 
     return $self->_build_http_request(
-        method  => 'POST',
         headers => $self->headers,
     );
 }

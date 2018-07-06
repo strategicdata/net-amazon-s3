@@ -6,6 +6,7 @@ extends 'Net::Amazon::S3::Request::Object';
 
 with 'Net::Amazon::S3::Request::Role::Query::Param::Upload_id';
 with 'Net::Amazon::S3::Request::Role::Query::Param::Part_number';
+with 'Net::Amazon::S3::Request::Role::HTTP::Method::PUT';
 
 has 'value'         => ( is => 'ro', isa => 'Str|CodeRef|ScalarRef',     required => 0 );
 has 'copy_source_bucket'    => ( is => 'ro', isa => 'Str',     required => 0 );
@@ -30,7 +31,6 @@ sub http_request {
     }
 
     return $self->_build_http_request(
-        method  => 'PUT',
         headers => $headers,
         content => scalar( defined( $self->value ) ? $self->value : '' ),
     );

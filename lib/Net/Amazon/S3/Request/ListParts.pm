@@ -7,6 +7,7 @@ extends 'Net::Amazon::S3::Request::Object';
 # ABSTRACT: List the parts in a multipart upload.
 
 with 'Net::Amazon::S3::Request::Role::Query::Param::Upload_id';
+with 'Net::Amazon::S3::Request::Role::HTTP::Method::GET';
 
 has 'acl_short'         => ( is => 'ro', isa => 'Maybe[AclShort]', required => 0 );
 has 'headers' =>
@@ -23,7 +24,6 @@ sub http_request {
     }
 
     return $self->_build_http_request(
-        method  => 'GET',
         headers => $self->headers,
     );
 }
