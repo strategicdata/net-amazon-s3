@@ -1,6 +1,9 @@
 Revision history for Perl module Net::Amazon::S3:
 
-0.81 {{NEXT}}
+0.82 Sat  7 Jul 2018 14:28:06 BST
+     - Use HEAD request to determine bucket region (patch by Branislav Zahradník)
+
+0.81 Thu 28 Jun 2018 20:27:44 GMT (TRIAL RELEASE)
      - Restore CHANGES files format
      - Change path to new github repo
      - Add optional delimiter parameter to
