@@ -13,7 +13,7 @@ has 'creation_date' => ( is => 'ro', isa => 'Maybe[Str]', required => 0 );
 has 'region' => (
     is => 'ro',
     lazy => 1,
-    default => sub { $_[0]->get_location_constraint },
+    default => sub { $_[0]->_head_region },
 );
 
 __PACKAGE__->meta->make_immutable;
@@ -683,6 +683,31 @@ sub _content_sub {
         $remaining -= length($buffer);
         return $buffer;
     };
+}
+
+sub _head_region {
+    my ($self) = @_;
+
+    my $protocol = $self->account->secure ? 'https' : 'http';
+    my $host = $self->account->host;
+    my $path = $self->bucket;
+
+    if ($self->account->use_virtual_host) {
+        $host = "$path.$host";
+        $path = '';
+    }
+
+    my $request = HTTP::Request->new( HEAD => "${protocol}://${host}/$path" );
+
+    # Disable redirects
+    my $requests_redirectable = $self->account->ua->requests_redirectable;
+    $self->account->ua->requests_redirectable( [] );
+
+    my $response = $self->account->_do_http( $request );
+
+    $self->account->ua->requests_redirectable( $requests_redirectable );
+
+    return $response->header( 'x-amz-bucket-region' );
 }
 
 1;
