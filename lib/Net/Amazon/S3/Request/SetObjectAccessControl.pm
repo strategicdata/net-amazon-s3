@@ -14,6 +14,12 @@ with 'Net::Amazon::S3::Request::Role::HTTP::Method::PUT';
 
 __PACKAGE__->meta->make_immutable;
 
+sub _request_content {
+    my ($self) = @_;
+
+    return $self->acl_xml || '';
+}
+
 sub http_request {
     my $self = shift;
 
@@ -25,11 +31,7 @@ sub http_request {
         confess "can not provide both acl_xml and acl_short";
     }
 
-    my $xml = $self->acl_xml || '';
-
-    return $self->_build_http_request(
-        content => $xml,
-    );
+    return $self->_build_http_request;
 }
 
 1;

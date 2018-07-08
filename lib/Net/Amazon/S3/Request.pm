@@ -85,7 +85,19 @@ subtype 'BucketName' => as 'BucketName3' => where {
 
 has 's3' => ( is => 'ro', isa => 'Net::Amazon::S3', required => 1 );
 
+has '_http_request_content' => (
+    is => 'ro',
+    init_arg => undef,
+    isa => 'Maybe[Str]',
+    lazy => 1,
+    builder => '_request_content',
+);
+
 __PACKAGE__->meta->make_immutable;
+
+sub _request_content {
+    '';
+}
 
 sub _request_path {
     '';
@@ -132,6 +144,7 @@ sub _build_signed_request {
     $params{path}       = $self->_http_request_path     unless exists $params{path};
     $params{method}     = $self->_http_request_method   unless exists $params{method};
     $params{headers}    = $self->_http_request_headers  unless exists $params{headers};
+    $params{content}    = $self->_http_request_content  unless exists $params{content} or ! defined $self->_http_request_content;
 
     # Although Amazon's Signature 4 test suite explicitely handles // it appears
     # it's inconsistent with their implementation so removing it here

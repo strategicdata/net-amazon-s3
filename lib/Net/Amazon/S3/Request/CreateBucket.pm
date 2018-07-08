@@ -13,8 +13,8 @@ has 'location_constraint' =>
 
 __PACKAGE__->meta->make_immutable;
 
-sub http_request {
-    my $self = shift;
+sub _request_content {
+    my ($self) = @_;
 
     my $content = '';
     if ( defined $self->location_constraint &&
@@ -24,9 +24,12 @@ sub http_request {
             . $self->location_constraint
             . "</LocationConstraint></CreateBucketConfiguration>";
     }
+}
+
+sub http_request {
+    my $self = shift;
 
     return $self->_build_http_request(
-        content => $content,
         region  => 'us-east-1',
     );
 }
