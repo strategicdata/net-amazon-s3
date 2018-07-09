@@ -85,8 +85,16 @@ sub expect_request_instance {
     my $request = eval { $test_class->name->new (%with) };
     my $error = $@;
 
-    ok defined $request, "should create (mocked) instance of $params{request_class}"
-        or diag $error;
+    if (exists $params{throws}) {
+        if (defined $request) {
+            fail "create instance should fail";
+        } else {
+            cmp_deeply $error, $params{throws}, "create instance should fail";
+        }
+    } else {
+        ok defined $request, "should create (mocked) instance of $params{request_class}"
+            or diag $error;
+    }
 
     return $request;
 }

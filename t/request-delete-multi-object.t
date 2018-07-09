@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 1 + 2;
+use Test::More tests => 1 + 3;
 use Test::Deep;
 use Test::Warnings;
 
@@ -50,3 +50,10 @@ behaves_like_net_amazon_s3_request 'delete multi object with some keys' => (
 EOXML
 );
 
+behaves_like_net_amazon_s3_request 'delete multi object with more than 1_000 keys' => (
+    request_class   => 'Net::Amazon::S3::Request::DeleteMultiObject',
+    with_bucket     => 'some-bucket',
+    with_keys       => [ 0 .. 1_000 ],
+
+    throws          => re( qr/The maximum number of keys is 1000/ ),
+);

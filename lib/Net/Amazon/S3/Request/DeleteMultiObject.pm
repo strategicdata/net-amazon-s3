@@ -35,14 +35,11 @@ sub _request_content {
     return $xml_doc->toString;
 }
 
-sub http_request {
-    my $self = shift;
+sub BUILD {
+    my ($self) = @_;
 
-    #croak if we get a request for over 1000 objects
     croak "The maximum number of keys is 1000"
         if (scalar(@{$self->keys}) > 1000);
-
-    return $self->_build_http_request;
 }
 
 1;

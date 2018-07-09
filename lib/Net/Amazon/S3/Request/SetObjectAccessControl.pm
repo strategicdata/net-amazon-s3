@@ -20,8 +20,8 @@ sub _request_content {
     return $self->acl_xml || '';
 }
 
-sub http_request {
-    my $self = shift;
+sub BUILD {
+    my ($self) = @_;
 
     unless ( $self->acl_xml || $self->acl_short ) {
         confess "need either acl_xml or acl_short";
@@ -30,8 +30,6 @@ sub http_request {
     if ( $self->acl_xml && $self->acl_short ) {
         confess "can not provide both acl_xml and acl_short";
     }
-
-    return $self->_build_http_request;
 }
 
 1;

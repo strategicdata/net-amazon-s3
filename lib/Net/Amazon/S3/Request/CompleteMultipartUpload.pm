@@ -38,13 +38,11 @@ sub _request_content {
     return $xml_doc->toString;
 }
 
-sub http_request {
-    my $self = shift;
+sub BUILD {
+    my ($self) = @_;
 
     croak "must have an equally sized list of etags and part numbers"
         unless scalar(@{$self->part_numbers}) == scalar(@{$self->etags});
-
-    return $self->_build_http_request;
 }
 
 1;
