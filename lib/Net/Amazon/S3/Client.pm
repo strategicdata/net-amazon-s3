@@ -9,8 +9,6 @@ use Moose::Util::TypeConstraints;
 
 type 'Etag' => where { $_ =~ /^[a-z0-9]{32}(?:-\d+)?$/ };
 
-type 'OwnerId' => where { $_ =~ /^[a-z0-9]{64}$/ };
-
 has 's3' => ( is => 'ro', isa => 'Net::Amazon::S3', required => 1 );
 
 __PACKAGE__->meta->make_immutable;
