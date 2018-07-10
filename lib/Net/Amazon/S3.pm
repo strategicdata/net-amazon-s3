@@ -145,7 +145,7 @@ my $AMAZON_S3_HOST = 's3.amazonaws.com';
 has 'use_iam_role' => ( is => 'ro', isa => 'Bool', required => 0, default => 0);
 has 'aws_access_key_id'     => ( is => 'rw', isa => 'Str', required => 0 );
 has 'aws_secret_access_key' => ( is => 'rw', isa => 'Str', required => 0 );
-has 'secure' => ( is => 'ro', isa => 'Bool', required => 0, default => 0 );
+has 'secure' => ( is => 'ro', isa => 'Bool', required => 0, default => 1 );
 has 'timeout' => ( is => 'ro', isa => 'Num',  required => 0, default => 30 );
 has 'retry'   => ( is => 'ro', isa => 'Bool', required => 0, default => 0 );
 has 'host'    => ( is => 'ro', isa => 'Str',  required => 0, default => $AMAZON_S3_HOST );
@@ -215,8 +215,8 @@ with a true value.
 
 =item secure
 
-Set this to C<1> if you want to use SSL-encrypted connections when talking
-to S3. Defaults to C<0>.
+Set this to C<0> if you don't want to use SSL-encrypted connections when talking
+to S3. Defaults to C<1>.
 
 To use SSL-encrypted connections, LWP::Protocol::https is required.
 
