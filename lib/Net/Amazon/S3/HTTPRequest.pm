@@ -8,7 +8,6 @@ use Moose::Util::TypeConstraints;
 use URI::Escape qw( uri_escape_utf8 );
 use URI::QueryParam;
 use URI;
-use VM::EC2::Security::CredentialCache;
 
 use Net::Amazon::S3::Signature::V2;
 
