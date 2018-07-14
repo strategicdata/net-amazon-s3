@@ -10,7 +10,6 @@ use HTTP::Date qw[ time2str ];
 use MIME::Base64 qw( encode_base64 );
 use URI::QueryParam;
 use URI;
-use VM::EC2::Security::CredentialCache;
 
 use namespace::clean;
 
