@@ -9,6 +9,10 @@ use Shared::Examples::Net::Amazon::S3::Request (
     qw[ behaves_like_net_amazon_s3_request ],
 );
 
+use Shared::Examples::Net::Amazon::S3::Operation::Bucket::Create (
+    qw[ create_bucket_in_ca_central_1_content_xml ],
+);
+
 behaves_like_net_amazon_s3_request 'create bucket' => (
     request_class   => 'Net::Amazon::S3::Request::CreateBucket',
     with_bucket     => 'some-bucket',
@@ -38,11 +42,7 @@ behaves_like_net_amazon_s3_request 'create bucket in region' => (
     expect_request_method   => 'PUT',
     expect_request_path     => 'some-bucket/',
     expect_request_headers  => { },
-    expect_request_content  => <<'EOXML',
-<CreateBucketConfiguration>
-  <LocationConstraint>ca-central-1</LocationConstraint>
-</CreateBucketConfiguration>
-EOXML
+    expect_request_content  => create_bucket_in_ca_central_1_content_xml,
 );
 
 behaves_like_net_amazon_s3_request 'create bucket in region with acl' => (
@@ -54,10 +54,6 @@ behaves_like_net_amazon_s3_request 'create bucket in region with acl' => (
     expect_request_method   => 'PUT',
     expect_request_path     => 'some-bucket/',
     expect_request_headers  => { 'x-amz-acl' => 'private' },
-    expect_request_content  => <<'EOXML',
-<CreateBucketConfiguration>
-  <LocationConstraint>ca-central-1</LocationConstraint>
-</CreateBucketConfiguration>
-EOXML
+    expect_request_content  => create_bucket_in_ca_central_1_content_xml,
 );
 

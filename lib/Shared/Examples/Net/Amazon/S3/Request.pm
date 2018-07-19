@@ -26,11 +26,17 @@ sub _canonical_xml {
     my ($xml) = @_;
 
     return $xml unless $xml;
+    return $xml if ref $xml;
 
-    XML::LibXML->load_xml (
-        string => $xml,
-        no_blanks => 1,
-    )->toStringC14N;
+    my $canonical = eval {
+        XML::LibXML->load_xml (
+            string => $xml,
+            no_blanks => 1,
+        )->toStringC14N
+    };
+
+    return $xml unless defined $canonical;
+    return $canonical;
 }
 
 sub _test_meta_build_http_request {
