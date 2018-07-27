@@ -239,7 +239,7 @@ you to connect to any S3-compatible host.
 =item use_virtual_host
 
 Use the virtual host method ('bucketname.s3.amazonaws.com') instead of specifying the
-bucket at the first part of the path. This is particularily useful if you want to access
+bucket at the first part of the path. This is particularly useful if you want to access
 buckets not located in the US-Standard region (such as EU, Asia Pacific or South America).
 See L<http://docs.aws.amazon.com/AmazonS3/latest/dev/VirtualHosting.html> for the pros and cons.
 
@@ -358,7 +358,7 @@ The name of the bucket you want to add
 
 =item acl_short (optional)
 
-See the set_acl subroutine for documenation on the acl_short options
+See the set_acl subroutine for documentation on the acl_short options
 
 =item location_constraint (option)
 
