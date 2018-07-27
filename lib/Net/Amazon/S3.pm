@@ -173,19 +173,6 @@ has authorization_method => (
     },
 );
 
-sub BUILD {
-    my ($self) = @_;
-
-    if ($self->use_iam_role) {
-        eval "require VM::EC2::Security::CredentialCache" or die $@;
-        my $creds = VM::EC2::Security::CredentialCache->get();
-        defined($creds) || die("Unable to retrieve IAM role credentials");
-        $self->aws_access_key_id($creds->accessKeyId);
-        $self->aws_secret_access_key($creds->secretAccessKey);
-        $self->aws_session_token($creds->sessionToken);
-    }
-}
-
 __PACKAGE__->meta->make_immutable;
 
 my $KEEP_ALIVE_CACHESIZE = 10;
@@ -307,6 +294,15 @@ sub BUILD {
 
     $self->ua($ua);
     $self->libxml( XML::LibXML->new );
+
+    if ($self->use_iam_role) {
+        eval "require VM::EC2::Security::CredentialCache" or die $@;
+        my $creds = VM::EC2::Security::CredentialCache->get();
+        defined($creds) || die("Unable to retrieve IAM role credentials");
+        $self->aws_access_key_id($creds->accessKeyId);
+        $self->aws_secret_access_key($creds->secretAccessKey);
+        $self->aws_session_token($creds->sessionToken);
+    }
 }
 
 =head2 buckets
