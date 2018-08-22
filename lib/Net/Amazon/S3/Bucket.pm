@@ -86,27 +86,6 @@ Create a new bucket object. Expects a hash containing these two arguments:
 
 =cut
 
-sub _uri {
-    my ( $self, $key ) = @_;
-    return ($key)
-        ? $self->bucket . "/" . $self->account->_urlencode($key)
-        : $self->bucket . "/";
-}
-
-sub _conf_to_headers {
-    my ( $self, $conf ) = @_;
-    $conf = {} unless defined $conf;
-    $conf = {%$conf};    # clone it so as not to clobber the caller's copy
-
-    if ( $conf->{acl_short} ) {
-        $self->account->_validate_acl_short( $conf->{acl_short} );
-        $conf->{'x-amz-acl'} = $conf->{acl_short};
-        delete $conf->{acl_short};
-    }
-
-    return $conf;
-}
-
 =head2 add_key
 
 Takes three positional parameters:
