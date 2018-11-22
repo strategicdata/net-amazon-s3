@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::Query::Param::Prefix;
+# ABSTRACT: prefix query param role
 
 use Moose::Role;
 

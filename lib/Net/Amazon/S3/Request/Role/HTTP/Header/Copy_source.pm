@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::HTTP::Header::Copy_source;
+# ABSTRACT: x-amz-copy-source header role
 
 use Moose::Role;
 

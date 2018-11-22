@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::Query::Param::Delimiter;
+# ABSTRACT: delimiter query param role
 
 use Moose::Role;
 

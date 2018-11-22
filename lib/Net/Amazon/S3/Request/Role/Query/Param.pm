@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::Query::Param;
+# ABSTRACT: request query params role
 
 use MooseX::Role::Parameterized;
 

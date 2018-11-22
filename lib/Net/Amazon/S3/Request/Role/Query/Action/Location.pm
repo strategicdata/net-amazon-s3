@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::Query::Action::Location;
+# ABSTRACT: location query action role
 
 use Moose::Role;
 

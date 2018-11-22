@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::HTTP::Header::Content_type;
+# ABSTRACT: Content-Type header role
 
 use MooseX::Role::Parameterized;
 

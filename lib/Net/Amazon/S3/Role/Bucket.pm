@@ -1,8 +1,5 @@
-
-use strict;
-use warnings;
-
 package Net::Amazon::S3::Role::Bucket;
+# ABSTRACT: Bucket role
 
 use Moose::Role;
 use Scalar::Util;

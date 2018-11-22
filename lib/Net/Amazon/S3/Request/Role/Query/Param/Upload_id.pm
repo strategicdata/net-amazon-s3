@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::Query::Param::Upload_id;
+# ABSTRACT: upload_id query param role
 
 use Moose::Role;
 

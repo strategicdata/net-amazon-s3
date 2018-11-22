@@ -1,8 +1,5 @@
-
-use strict;
-use warnings;
-
 package Net::Amazon::S3::Signature;
+# ABSTRACT: S3 Signature implementation base class
 
 use Moose;
 
@@ -27,25 +24,17 @@ sub sign_uri {
 
 __END__
 
-=head1 NAME
-
-Net::Amazon::S3::Signature - S3 Signature implementation base class
-
-=head1 METHODS
-
-=over
-
-=item new
+=method new
 
 Signature class should accept HTTPRequest instance and determine every
 required parameter via this instance
 
-=item sign_request( $request )
+=method sign_request( $request )
 
 Signature class should return authenticated request based on given parameter.
 Parameter can be modified.
 
-=item sign_uri( $request, $expires_at? )
+=method sign_uri( $request, $expires_at? )
 
 Signature class should return authenticated uri based on given request.
 
@@ -55,5 +44,3 @@ Default and maximal allowed value may depend on signature version.
 Default request date is current time.
 Signature class should accept provided C<< X-Amz-Date >> header instead (if signing request)
 or query parameter (if signing uri)
-
-=back

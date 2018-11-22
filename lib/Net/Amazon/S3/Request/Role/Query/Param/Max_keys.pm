@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::Query::Param::Max_keys;
+# ABSTRACT: max-keys query param role
 
 use Moose::Role;
 

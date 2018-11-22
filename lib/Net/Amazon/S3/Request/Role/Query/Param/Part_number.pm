@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::Query::Param::Part_number;
+# ABSTRACT: partNumber query param role
 
 use Moose::Role;
 

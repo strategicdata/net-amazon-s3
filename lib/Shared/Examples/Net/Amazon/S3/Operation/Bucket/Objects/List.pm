@@ -1,4 +1,5 @@
 package Shared::Examples::Net::Amazon::S3::Operation::Bucket::Objects::List;
+# ABSTRACT: used for testing and as example
 
 use strict;
 use warnings;
