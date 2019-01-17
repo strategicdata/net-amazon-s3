@@ -173,9 +173,9 @@ has authorization_method => (
     },
 );
 
-__PACKAGE__->meta->make_immutable;
+has keep_alive_cache_size => ( is => 'ro', isa => 'Int', required => 0, default => 10 );
 
-my $KEEP_ALIVE_CACHESIZE = 10;
+__PACKAGE__->meta->make_immutable;
 
 =head1 METHODS
 
@@ -219,6 +219,10 @@ Set this to C<0> if you don't want to use SSL-encrypted connections when talking
 to S3. Defaults to C<1>.
 
 To use SSL-encrypted connections, LWP::Protocol::https is required.
+
+=item keep_alive_cache_size
+
+Set this to C<0> to disable Keep-Alives.  Default is C<10>.
 
 =item timeout
 
@@ -278,13 +282,13 @@ sub BUILD {
     my $ua;
     if ( $self->retry ) {
         $ua = LWP::UserAgent::Determined->new(
-            keep_alive            => $KEEP_ALIVE_CACHESIZE,
+            keep_alive            => $self->keep_alive_cache_size,
             requests_redirectable => [qw(GET HEAD DELETE PUT POST)],
         );
         $ua->timing('1,2,4,8,16,32');
     } else {
         $ua = LWP::UserAgent->new(
-            keep_alive            => $KEEP_ALIVE_CACHESIZE,
+            keep_alive            => $self->keep_alive_cache_size,
             requests_redirectable => [qw(GET HEAD DELETE PUT POST)],
         );
     }
