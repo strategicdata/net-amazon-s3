@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::HTTP::Header::Acl_short;
+# ABSTRACT: x-amz-acl header role
 
 use Moose::Role;
 

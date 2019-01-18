@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::HTTP::Header::Content_md5;
+# ABSTRACT: Content-MD5 header role
 
 use Moose::Role;
 use Digest::MD5 qw[];

@@ -1,8 +1,5 @@
-
-use strict;
-use warnings;
-
 package Net::Amazon::S3::Signature::V4;
+# ABSTRACT: V4 signatures
 
 use Moose;
 

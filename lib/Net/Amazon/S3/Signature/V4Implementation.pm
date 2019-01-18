@@ -1,6 +1,6 @@
 #package Net::Amazon::Signature::V4;
 package Net::Amazon::S3::Signature::V4Implementation;
-
+# ABSTRACT: Implements the Amazon Web Services signature version 4, AWS4-HMAC-SHA256 (copy of Net::Amazon::Signature::V4)
 
 
 use strict;
@@ -23,10 +23,6 @@ our $X_AMZ_DATE           = 'X-Amz-Date';
 our $X_AMZ_EXPIRES        = 'X-Amz-Expires';
 our $X_AMZ_SIGNEDHEADERS  = 'X-Amz-SignedHeaders';
 our $X_AMZ_SIGNATURE      = 'X-Amz-Signature';
-
-=head1 NAME
-
-Net::Amazon::Signature::V4 - Implements the Amazon Web Services signature version 4, AWS4-HMAC-SHA256
 
 =head1 VERSION
 

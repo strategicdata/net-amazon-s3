@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::HTTP::Method;
+# ABSTRACT: HTTP method role
 
 use MooseX::Role::Parameterized;
 

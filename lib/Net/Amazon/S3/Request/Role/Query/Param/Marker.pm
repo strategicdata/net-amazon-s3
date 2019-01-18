@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::Query::Param::Marker;
+# ABSTRACT: marker query param role
 
 use Moose::Role;
 

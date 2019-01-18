@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::HTTP::Header;
+# ABSTRACT: HTTP Header Role
 
 use MooseX::Role::Parameterized;
 

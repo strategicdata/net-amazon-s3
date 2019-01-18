@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::HTTP::Header::Encryption;
+# ABSTRACT: x-amz-server-side-encryption header role
 
 use Moose::Role;
 

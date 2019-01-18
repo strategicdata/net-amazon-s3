@@ -1,8 +1,5 @@
-
-use strict;
-use warnings;
-
 package Net::Amazon::S3::Signature::V2;
+# ABSTRACT: V2 signatures
 
 use Moose;
 use URI::Escape qw( uri_escape_utf8 );

@@ -1,4 +1,5 @@
 package Net::Amazon::S3::Request::Role::HTTP::Header::Content_length;
+# ABSTRACT: Content-Lenghth header role
 
 use Moose::Role;
 use Digest::MD5 qw[];

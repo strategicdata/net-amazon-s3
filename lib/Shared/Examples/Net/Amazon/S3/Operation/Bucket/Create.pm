@@ -1,4 +1,5 @@
 package Shared::Examples::Net::Amazon::S3::Operation::Bucket::Create;
+# ABSTRACT: used for testing and as example
 
 use strict;
 use warnings;
