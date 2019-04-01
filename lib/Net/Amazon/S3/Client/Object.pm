@@ -66,6 +66,11 @@ has 'user_metadata' => (
     required => 0,
     default  => sub { {} },
 );
+has 'website_redirect_location' => (
+    is       => 'ro',
+    isa      => 'Str',
+    required => 0,
+);
 has 'encryption' => (
     is       => 'ro',
     isa      => 'Maybe[Str]',
@@ -204,6 +209,9 @@ sub _put {
     }
     if ( $self->storage_class && $self->storage_class ne 'standard' ) {
         $conf->{'x-amz-storage-class'} = uc $self->storage_class;
+    }
+    if ( $self->website_redirect_location ) {
+        $conf->{'x-amz-website-redirect-location'} = $self->website_redirect_location;
     }
     $conf->{"x-amz-meta-\L$_"} = $self->user_metadata->{$_}
         for keys %{ $self->user_metadata };
@@ -557,6 +565,10 @@ You may specify the S3 storage class by setting C<storage_class> to either
 C<standard>, C<reduced_redundancy>, C<standard_ia>, or C<onezone_ia>;
 the default is C<standard>.
 
+You may set website-redirect-location object metadata by setting
+C<website_redirect_location> to either another object name in the same
+bucket, or to an external URL.
+
 =head2 put_filename
 
   # upload a file
@@ -581,6 +593,10 @@ Content-Disposition using C<content_disposition>.
 You may specify the S3 storage class by setting C<storage_class> to either
 C<standard>, C<reduced_redundancy>, C<standard_ia>, or C<onezone_ia>;
 the default is C<standard>.
+
+You may set website-redirect-location object metadata by setting
+C<website_redirect_location> to either another object name in the same
+bucket, or to an external URL.
 
 User metadata may be set by providing a non-empty hashref as
 C<user_metadata>.
