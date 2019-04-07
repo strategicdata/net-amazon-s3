@@ -35,6 +35,11 @@ no strict 'vars'
     'x-amz-meta-colour' => 'orange',
   }));
 
+  # Enable server-side encryption
+  ok($bucket->add_key("key", "data", {
+     encryption => 'AES256',
+  }));
+
   # the err and errstr methods just proxy up to the Net::Amazon::S3's
   # objects err/errstr methods.
   $bucket->add_key("bar", "baz") or
@@ -123,12 +128,15 @@ sub add_key {
         delete $conf->{acl_short};
     }
 
+    my $encryption = delete $conf->{encryption};
+
     my $http_request = Net::Amazon::S3::Request::PutObject->new(
         s3        => $self->account,
         bucket    => $self->bucket,
         key       => $key,
         value     => $value,
         acl_short => $acl_short,
+        (encryption => $encryption) x!! defined $encryption,
         headers   => $conf,
     )->http_request;
 
@@ -206,6 +214,8 @@ sub copy_key {
 
     $conf->{'x-amz-copy-source'} = $source;
 
+    my $encryption = delete $conf->{encryption};
+
     my $acct    = $self->account;
     my $http_request = Net::Amazon::S3::Request::PutObject->new(
         s3        => $self->account,
@@ -213,6 +223,7 @@ sub copy_key {
         key       => $key,
         value     => '',
         acl_short => $acl_short,
+        (encryption => $encryption) x!! defined $encryption,
         headers   => $conf,
     )->http_request;
 

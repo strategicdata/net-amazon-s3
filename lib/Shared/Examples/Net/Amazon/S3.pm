@@ -368,6 +368,7 @@ sub expect_operation_object_create {
         qw[ with_content_disposition  ],
         qw[ with_content_encoding  ],
         qw[ with_content_type  ],
+        qw[ with_encryption ],
         qw[ with_expires ],
         qw[ with_storage_class  ],
         qw[ with_user_metadata ],

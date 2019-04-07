@@ -209,6 +209,7 @@ sub operation_object_create {
         qw[ content_disposition  ],
         qw[ content_encoding  ],
         qw[ content_type  ],
+        qw[ encryption ],
         qw[ expires ],
         ;
 
