@@ -670,23 +670,35 @@ sub _head_region {
     my $protocol = $self->account->secure ? 'https' : 'http';
     my $host = $self->account->host;
     my $path = $self->bucket;
+    my @retry = (1, 2, (4) x 8);
 
     if ($self->account->use_virtual_host) {
         $host = "$path.$host";
         $path = '';
     }
 
-    my $request = HTTP::Request->new( HEAD => "${protocol}://${host}/$path" );
+    my $request_uri = "${protocol}://${host}/$path";
+    while (@retry) {
+        my $request = HTTP::Request->new (HEAD => $request_uri);
 
-    # Disable redirects
-    my $requests_redirectable = $self->account->ua->requests_redirectable;
-    $self->account->ua->requests_redirectable( [] );
+        # Disable redirects
+        my $requests_redirectable = $self->account->ua->requests_redirectable;
+        $self->account->ua->requests_redirectable( [] );
 
-    my $response = $self->account->_do_http( $request );
+        my $response = $self->account->_do_http( $request );
 
-    $self->account->ua->requests_redirectable( $requests_redirectable );
+        $self->account->ua->requests_redirectable( $requests_redirectable );
 
-    return $response->header( 'x-amz-bucket-region' );
+        return $response->header ('x-amz-bucket-region')
+            if $response->header ('x-amz-bucket-region');
+
+        print STDERR "Invalid bucket head response; $request_uri\n";
+        print STDERR $response->as_string;
+
+        sleep shift @retry;
+    }
+
+    die "Cannot determine bucket region; bucket=${\ $self->bucket }";
 }
 
 1;
