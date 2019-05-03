@@ -334,7 +334,7 @@ sub _format_amz_date {
 }
 
 sub _now {
-	return scalar Time::Piece::gmtime;
+	return scalar Time::Piece->gmtime;
 }
 
 sub _req_timepiece {
